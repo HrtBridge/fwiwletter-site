@@ -50,16 +50,7 @@
     margin: 0 auto 20px;
     max-width: 560px;
   }
-  .signup { margin: 36px 0 12px; }
-  .signup h2 {
-    font-size: 1.4rem;
-    font-weight: normal;
-    margin-bottom: 6px;
-  }
-  .signup p {
-    font-style: italic;
-    margin-bottom: 20px;
-  }
+  .subscribe-block { margin: 18px 0 26px; }
   /* beehiiv embed */
   #beehiiv-embed { margin: 0 auto; max-width: 480px; }
   /* past issues (list refreshed weekly by build-archive.py) */
@@ -80,6 +71,80 @@
   .past-issues .date { color: #555; font-size: 0.95rem; }
   .past-issues .all { margin-top: 18px; font-style: italic; }
   .past-issues .coming-soon { font-style: italic; color: #555; }
+  /* from brent */
+  .from-brent { margin: 48px 0 12px; }
+  .from-brent h2 {
+    font-size: 1.4rem;
+    font-weight: normal;
+    margin-bottom: 14px;
+  }
+  .brent-portrait {
+    width: 100%;
+    max-width: 300px;
+    height: auto;
+    display: block;
+    margin: 0 auto 20px;
+  }
+  .from-brent p {
+    font-size: 1.05rem;
+    text-align: left;
+    margin: 0 auto 16px;
+    max-width: 560px;
+  }
+  .this-week { margin: 8px auto; max-width: 560px; }
+  .this-week-label { font-style: italic; margin-bottom: 6px; }
+  .this-week-q { font-size: 1.6rem; font-weight: bold; line-height: 1.35; }
+  .share-block h2 {
+    font-size: 1.4rem;
+    font-weight: normal;
+    margin-bottom: 6px;
+  }
+  .form-toggle { margin: 4px auto 8px; max-width: 640px; }
+  .form-toggle summary {
+    display: inline-block;
+    padding: 10px 28px;
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    list-style: none;
+  }
+  .form-toggle summary::-webkit-details-marker { display: none; }
+  .form-toggle summary::marker { display: none; }
+  .form-toggle summary:hover { background: #ece4d0; }
+  .form-toggle summary::after { content: " \25be"; }
+  .form-toggle[open] summary::after { content: " \25b4"; }
+  .form-panel { margin-top: 20px; }
+  .form-note { font-style: italic; margin-bottom: 16px; }
+  .answer-form iframe, .suggest iframe {
+    width: 100%;
+    max-width: 640px;
+    border: 0;
+  }
+  .form-fallback { margin-top: 8px; font-style: italic; font-size: 0.95rem; }
+  .form-fallback a { color: var(--ink); }
+  .share-links a, .share-links button {
+    display: inline-block;
+    margin: 6px 6px 0;
+    padding: 8px 18px;
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 1rem;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .share-links a:hover, .share-links button:hover { background: #ece4d0; }
+  .toggles { margin: 4px 0 8px; }
+  .toggles section { margin: 10px 0; }
+  .latest-title { font-size: 1.1rem; }
+  .latest-title a { color: var(--ink); }
+  .latest-title .date { color: #555; font-size: 0.95rem; }
+  .share-inline { margin: 14px 0 4px; }
+  .share-inline .share-label { font-style: italic; margin-right: 4px; font-size: 0.95rem; }
+  .share-inline a, .share-inline button { padding: 5px 14px; font-size: 0.9rem; }
   footer {
     margin-top: 56px;
     font-size: 0.9rem;
@@ -103,14 +168,76 @@
 
     <p class="lede">If you live around here, your neighbors' answers are worth hearing. If you don't, they're still worth hearing.</p>
 
-    <div class="signup">
-      <h2>Get it every Wednesday</h2>
-      <p>Free. Unsubscribe anytime.</p>
+    <section class="subscribe-block">
+      <details class="form-toggle">
+        <summary><strong>Get the letter every Wednesday</strong></summary>
+        <div class="form-panel">
+          <p>Free. Unsubscribe anytime.</p>
 
-      <!-- beehiiv signup form -->
-      <div id="beehiiv-embed">
-        <script async src="https://subscribe-forms.beehiiv.com/v3/loader.js" data-beehiiv-form="0d92165c-529c-49e6-8f86-350cc0455c61"></script>
-      </div>
+          <!-- beehiiv signup form -->
+          <div id="beehiiv-embed">
+            <script async src="https://subscribe-forms.beehiiv.com/v3/loader.js" data-beehiiv-form="0d92165c-529c-49e6-8f86-350cc0455c61"></script>
+          </div>
+        </div>
+      </details>
+    </section>
+
+    <section class="this-week">
+      <p class="this-week-label">This week's question</p>
+      <!-- WEEKLY-QUESTION-BEGIN: Flint updates the question below when Brent names each week's question -->
+      <p class="this-week-q">What&rsquo;s the biggest issue facing Andrew County?</p>
+      <!-- WEEKLY-QUESTION-END -->
+    </section>
+
+    <section class="share-block" id="share-question">
+      <p class="share-links share-inline">
+        <span class="share-label">Share this question:</span>
+        <a data-share="facebook" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Ffwiwletter.com" target="_blank" rel="noopener">Facebook</a>
+        <a data-share="x" href="https://twitter.com/intent/tweet?text=One%20question%20a%20week%2C%20answered%20by%20folks%20around%20here.&amp;url=https%3A%2F%2Ffwiwletter.com" target="_blank" rel="noopener">X</a>
+        <a data-share="sms" href="sms:?&amp;body=For%20What%20It%27s%20Worth%20%E2%80%94%20one%20question%20a%20week%2C%20answered%20by%20folks%20around%20here.%20https%3A%2F%2Ffwiwletter.com">Text</a>
+        <a data-share="email" href="mailto:?subject=For%20What%20It%27s%20Worth&amp;body=One%20question%20a%20week%2C%20answered%20by%20folks%20around%20here.%0A%0Ahttps%3A%2F%2Ffwiwletter.com">Email</a>
+        <button type="button" data-share="copy">Copy link</button>
+      </p>
+    </section>
+
+    <div class="toggles">
+      <section class="answer-form">
+        <details class="form-toggle">
+          <summary><strong>Answer this week's question</strong></summary>
+          <div class="form-panel">
+            <p class="form-note">Your answer stays anonymous in the letter &mdash; always.</p>
+            <iframe src="https://docs.google.com/forms/d/1qesAo8STmlAoW5iRAIqgxRDvB67_i2uovbdfT3_EJh0/viewform?embedded=true" width="640" height="1206" frameborder="0" marginheight="0" marginwidth="0" loading="lazy" title="Answer this week's question">Loading&hellip;</iframe>
+            <p class="form-fallback"><a href="https://docs.google.com/forms/d/1qesAo8STmlAoW5iRAIqgxRDvB67_i2uovbdfT3_EJh0/viewform">Form not loading? Answer here instead &rarr;</a></p>
+          </div>
+        </details>
+      </section>
+
+      <section class="suggest">
+        <details class="form-toggle">
+          <summary><strong>Suggest a question for a future week</strong></summary>
+          <div class="form-panel">
+            <p class="form-note">Send it my way &mdash; I pick one every week.</p>
+            <iframe src="https://docs.google.com/forms/d/1jO-iUbt_7wUj5Pis8Jgl_50YI-3oQesRk5D9h2VrARI/viewform?embedded=true" width="640" height="786" frameborder="0" marginheight="0" marginwidth="0" loading="lazy" title="Suggest a question">Loading&hellip;</iframe>
+            <p class="form-fallback"><a href="https://docs.google.com/forms/d/1jO-iUbt_7wUj5Pis8Jgl_50YI-3oQesRk5D9h2VrARI/viewform">Form not loading? Suggest here instead &rarr;</a></p>
+          </div>
+        </details>
+      </section>
+
+      <section class="read-latest">
+        <details class="form-toggle">
+          <summary><strong>Read the latest letter</strong></summary>
+          <div class="form-panel">
+            <!-- LATEST-ISSUE-BEGIN: auto-generated by build-archive.py, do not edit by hand -->
+            <p class="form-note">The first issue goes out soon &mdash; subscribe above and you'll get it Wednesday.</p>
+            <!-- LATEST-ISSUE-END -->
+
+
+
+
+          </div>
+        </details>
+      </section>
+
     </div>
 
     <!-- PAST-ISSUES-BEGIN: auto-generated by build-archive.py, do not edit by hand -->
@@ -121,6 +248,19 @@
       <p class="all"><a href="archive.html">View all past issues &rarr;</a></p>
     </section>
     <!-- PAST-ISSUES-END -->
+
+    <section class="from-brent">
+      <hr class="rule">
+      <h2>From Brent</h2>
+      <img class="brent-portrait" src="assets/brent-cutout-halftone-warm.png" alt="Brent Rosenauer">
+      <p>I used to own the Savannah Reporter with my dad. When Nicole and I got into real estate, I missed the genuine conversations I used to have with people in the community. I figured if I was going to be reaching out to people anyway, I could make those conversations about something besides buying and selling houses.</p>
+      <p>So every week, I call folks around here with one question and share what they tell me. That&rsquo;s the whole letter.</p>
+    </section>
+
+
+
+
+
 
 
 
@@ -137,5 +277,39 @@
     </footer>
 
   </div>
+  <script>
+  (function () {
+    var url = 'https://fwiwletter.com';
+    // Question share: compose the message from the live weekly question, so it
+    // stays current as the banner rotates. Static hrefs are the no-JS fallback.
+    var q = document.querySelector('.this-week-q');
+    var question = q ? q.textContent.replace(/\s+/g, ' ').trim() : '';
+    var text = question
+      ? 'This week\u2019s question: ' + question + ' \u2014 For What It\u2019s Worth'
+      : 'For What It\u2019s Worth \u2014 one question a week, answered by folks around here.';
+    var enc = encodeURIComponent;
+    var links = {
+      facebook: 'https://www.facebook.com/sharer/sharer.php?u=' + enc(url),
+      x: 'https://twitter.com/intent/tweet?text=' + enc(text) + '&url=' + enc(url),
+      sms: 'sms:?&body=' + enc(text + ' ' + url),
+      email: 'mailto:?subject=' + enc('For What It\u2019s Worth') + '&body=' + enc(text + '\n\n' + url)
+    };
+    document.querySelectorAll('#share-question [data-share]').forEach(function (el) {
+      var kind = el.getAttribute('data-share');
+      if (kind !== 'copy' && links[kind]) el.setAttribute('href', links[kind]);
+    });
+    // Copy-link buttons, anywhere on the page (data-url overrides the default).
+    document.querySelectorAll('[data-share="copy"]').forEach(function (el) {
+      el.addEventListener('click', function () {
+        var u = el.getAttribute('data-url') || url;
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(u).then(
+            function () { el.textContent = 'Copied!'; },
+            function () { prompt('Copy this link:', u); });
+        } else { prompt('Copy this link:', u); }
+      });
+    });
+  })();
+  </script>
 </body>
 </html>
