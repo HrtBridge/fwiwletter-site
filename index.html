@@ -103,6 +103,7 @@
   .this-week { margin: 8px auto; max-width: 560px; }
   .this-week-label { font-style: italic; margin-bottom: 6px; }
   .this-week-q { font-size: 1.6rem; font-weight: bold; line-height: 1.35; }
+  img.this-week-q { display: block; width: 100%; max-width: 440px; height: auto; margin: 6px auto 0; }
   .share-block h2 {
     font-size: 1.4rem;
     font-weight: normal;
@@ -193,8 +194,8 @@
 
     <section class="this-week">
       <p class="this-week-label">This week's question</p>
-      <!-- WEEKLY-QUESTION-BEGIN: Flint updates the question below when Brent names each week's question -->
-      <p class="this-week-q">How has Northwest Missouri changed since you were young?</p>
+      <!-- WEEKLY-QUESTION-BEGIN: Flint updates the image + alt below when Brent names each week's question -->
+      <img class="this-week-q" src="assets/fwiw-question-2026-10-05.png" alt="How has Northwest Missouri changed since you were young?" width="1080" height="1350">
       <!-- WEEKLY-QUESTION-END -->
     </section>
 
@@ -305,7 +306,7 @@
     // Question share: compose the message from the live weekly question, so it
     // stays current as the banner rotates. Static hrefs are the no-JS fallback.
     var q = document.querySelector('.this-week-q');
-    var question = q ? q.textContent.replace(/\s+/g, ' ').trim() : '';
+    var question = q ? (q.alt || q.textContent).replace(/\s+/g, ' ').trim() : '';
     var text = question
       ? 'This week\u2019s question: ' + question + ' \u2014 For What It\u2019s Worth'
       : 'For What It\u2019s Worth \u2014 one question a week, answered by folks around here.';
