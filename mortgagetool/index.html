@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rent to Home</title>
+<meta name="description" content="What could your rent buy? Enter monthly rent to estimate an affordable home purchase price. Educational estimate only.">
+<meta name="theme-color" content="#1a2e4a">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+  :root { color-scheme: light dark; --bg:#f6f4ef; --card:#ffffff; --ink:#1a1a1a; --muted:#5a5a5a; --accent:#1a2e4a; --accent2:#c9a227; --border:#d8d2c4; --input:#ffffff; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#121417; --card:#1d2126; --ink:#f2f0ea; --muted:#b0aca2; --accent:#8fb0d8; --accent2:#d4b53a; --border:#3a3f45; --input:#262b31; }
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; background:var(--bg); color:var(--ink); line-height:1.5; }
+  .wrap { max-width:560px; margin:0 auto; padding:24px 18px 48px; }
+  h1 { font-size:2rem; margin:0 0 4px; line-height:1.1; }
+  .sub { font-size:1.15rem; color:var(--muted); margin:0 0 24px; }
+  .card { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:18px; margin-bottom:16px; }
+  label { font-weight:600; display:block; margin-bottom:8px; }
+  input[type="number"], input[type="text"] { width:100%; font-size:1.4rem; padding:14px; border:1px solid var(--border); border-radius:10px; background:var(--input); color:var(--ink); }
+  .hint { color:var(--muted); font-size:0.9rem; margin-top:6px; }
+  fieldset { border:0; padding:0; margin:0; }
+  legend { font-weight:600; margin-bottom:8px; }
+  .programs { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .prog { border:1px solid var(--border); border-radius:10px; padding:12px; cursor:pointer; min-height:64px; }
+  .prog input { margin-right:6px; }
+  .prog small { display:block; color:var(--muted); font-size:0.85rem; }
+  .prog:has(input:checked) { border-color:var(--accent); outline:2px solid var(--accent); }
+  .toggle { display:flex; border:1px solid var(--border); border-radius:10px; overflow:hidden; }
+  .toggle button { flex:1; padding:14px; font-size:1rem; border:0; background:var(--input); color:var(--ink); cursor:pointer; }
+  .toggle button[aria-pressed="true"] { background:var(--accent); color:#fff; }
+  @media (prefers-color-scheme: dark) { .toggle button[aria-pressed="true"] { color:#121417; } }
+  input[type="range"] { width:100%; margin:12px 0 4px; }
+  .price { font-size:3rem; font-weight:800; line-height:1.05; margin:4px 0 8px; }
+  .result-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px; }
+  .stat b { display:block; font-size:1.25rem; }
+  .stat span { color:var(--muted); font-size:0.9rem; }
+  .rate-line { color:var(--muted); font-size:0.9rem; margin-top:10px; }
+  details { margin-top:14px; }
+  summary { cursor:pointer; font-weight:600; padding:10px 0; }
+  table { width:100%; border-collapse:collapse; font-size:0.95rem; }
+  td { padding:8px 0; border-top:1px solid var(--border); }
+  td:last-child { text-align:right; font-variant-numeric:tabular-nums; }
+  tr.total td { font-weight:700; }
+  button.primary { width:100%; padding:16px; font-size:1.05rem; border:0; border-radius:10px; background:var(--accent); color:#fff; cursor:pointer; }
+  @media (prefers-color-scheme: dark) { button.primary { color:#121417; } }
+  .disclaimer { color:var(--muted); font-size:0.85rem; }
+  .note { font-size:0.9rem; color:var(--muted); }
+  .error { color:#b3261e; font-weight:600; }
+  @media (prefers-color-scheme: dark) { .error { color:#ff8a80; } }
+</style>
+</head>
+<body>
+<main class="wrap">
+  <h1>Rent &rarr; Home</h1>
+  <p class="sub">What could your rent buy?</p>
+
+  <section class="card" aria-label="Rent input">
+    <label for="rent">How much do you pay in rent each month?</label>
+    <input id="rent" type="number" inputmode="decimal" min="0" step="1" value="1600" aria-describedby="rent-hint">
+    <p class="hint" id="rent-hint">Enter your current monthly rent. Results update as you type. No Calculate button needed.</p>
+    <p class="error" id="rent-error" hidden></p>
+  </section>
+
+  <section class="card">
+    <fieldset>
+      <legend>Loan program</legend>
+      <div class="programs" role="radiogroup" aria-label="Loan program">
+        <label class="prog"><input type="radio" name="program" value="fha" checked> FHA <small>3.5% down</small></label>
+        <label class="prog"><input type="radio" name="program" value="conventional"> Conventional <small>3% down</small></label>
+        <label class="prog"><input type="radio" name="program" value="usda"> USDA <small>0% down</small></label>
+        <label class="prog"><input type="radio" name="program" value="va"> VA <small>0% down</small></label>
+      </div>
+    </fieldset>
+    <p class="note" id="program-note"></p>
+  </section>
+
+  <section class="card">
+    <label>Interest rate</label>
+    <div class="toggle" role="group" aria-label="Rate source">
+      <button type="button" id="btn-market" aria-pressed="true">Current Market</button>
+      <button type="button" id="btn-custom" aria-pressed="false">Custom Rate</button>
+    </div>
+    <div id="custom-wrap" hidden>
+      <label for="custom-rate" style="margin-top:16px;">Custom rate: <span id="custom-rate-display">6.00%</span></label>
+      <input id="custom-rate" type="range" min="3" max="10" step="0.125" value="6">
+    </div>
+    <p class="rate-line" id="rate-line"></p>
+  </section>
+
+  <section class="card" aria-live="polite">
+    <span class="stat"><span>Estimated home purchase price</span></span>
+    <div class="price" id="price">$164,000</div>
+    <div class="result-grid">
+      <div class="stat"><b id="total-payment">$1,593</b><span>Estimated total monthly mortgage payment</span></div>
+      <div class="stat"><b id="down-payment">$5,740</b><span>Estimated down payment</span></div>
+      <div class="stat"><b id="program-out">FHA</b><span>Selected loan program</span></div>
+      <div class="stat"><b id="rate-out">7.32%</b><span>Selected interest rate</span></div>
+    </div>
+    <p class="note" id="floor-note" hidden>This rent is below the $175/month insurance assumption alone, so no purchase price fits under these assumptions.</p>
+  </section>
+
+  <section class="card">
+    <details>
+      <summary>See payment breakdown</summary>
+      <table>
+        <tbody>
+          <tr><td>Principal &amp; interest</td><td id="bd-pi"></td></tr>
+          <tr><td>Property taxes (estimated)</td><td id="bd-tax"></td></tr>
+          <tr><td>Homeowners insurance (estimated)</td><td id="bd-ins"></td></tr>
+          <tr><td id="bd-fee-label">Mortgage insurance / program fee</td><td id="bd-fee"></td></tr>
+          <tr class="total"><td>Total monthly payment</td><td id="bd-total"></td></tr>
+        </tbody>
+      </table>
+      <p class="note" id="assumptions"></p>
+    </details>
+    <div style="margin-top:16px;">
+      <button class="primary" id="copy-btn" type="button">Copy Estimate</button>
+      <p class="note" id="copy-status" aria-live="polite"></p>
+    </div>
+  </section>
+
+  <p class="disclaimer">Estimates are for educational purposes only and are not a loan offer or preapproval. Actual affordability depends on income, credit, debts, lender requirements, interest rates, property taxes, insurance, and other costs. Closing costs, HOA fees, utilities, and maintenance are not included.</p>
+  <p class="disclaimer">This tool shows payment-equivalent purchasing power, not mortgage qualification. It does not promise zero cash to close for USDA or VA financing. Market rates shown are index averages, not personalized financing offers.</p>
+  <p class="note">No renter information is collected or transmitted. Your rent, program, and rate preference are saved only on this device.</p>
+</main>
+
+<script>
+"use strict";
+/*
+ * Single configuration object. Update this (and rates.json) when program
+ * rules or market rates change. No secrets are stored here or in any
+ * browser code. Market rates are manually updated, date-stamped, and
+ * labeled as a proxy where applicable. See rates.json for the source record.
+ */
+const CONFIG = {
+  taxRateAnnual: 0.0175,          // 1.75% of purchase price per year
+  insuranceMonthly: 175,          // $175/month
+  hoaMonthly: 0,
+  termMonths: 360,                // 30-year fixed
+  customRateDefault: 0.06,
+  market: {
+    // Freddie Mac Primary Mortgage Market Survey, Oct 22, 2026.
+    // PMMS measures conventional, conforming, fully amortizing purchase
+    // loans for borrowers with 20% down and excellent credit.
+    // No free public FHA/USDA/VA benchmark was found, so this same rate
+    // is applied to all programs and is explicitly labeled "proxy" below.
+    // It is an index average, not a lender quote.
+    rate: 0.0732,
+    date: "2026-10-22",
+    source: "Freddie Mac Primary Mortgage Market Survey",
+    basis: "proxy",
+    updated: "2026-10-24"
+  },
+  programs: {
+    fha: {
+      label: "FHA", down: 0.035, upfront: 0.0175, annualFee: 0.0055,
+      feeLabel: "Mortgage insurance (MIP)",
+      note: "FHA: 3.5% down. 1.75% upfront MIP financed into the loan. Monthly MIP is 0.55% per year of the base loan amount."
+    },
+    conventional: {
+      label: "Conventional", down: 0.03, upfront: 0, annualFee: 0.0070,
+      feeLabel: "Mortgage insurance (PMI, estimated)",
+      note: "Conventional: 3% down. PMI is an estimate at 0.70% per year of the original loan balance and depends on borrower qualifications."
+    },
+    usda: {
+      label: "USDA", down: 0, upfront: 0.01, annualFee: 0.0035,
+      feeLabel: "Annual program fee",
+      note: "USDA: 0% down. 1.00% upfront guarantee fee financed into the loan, plus a 0.35% annual fee. Eligibility depends on property location, household income, and underwriting."
+    },
+    va: {
+      label: "VA", down: 0, upfront: 0.0215, annualFee: 0,
+      feeLabel: "Mortgage insurance / program fee",
+      note: "VA: 0% down, no monthly mortgage insurance. Default funding fee is 2.15% financed, for a first-use, nonexempt borrower with less than 5% down, subject to current VA rules. VA eligibility is required and some borrowers are exempt from the funding fee."
+    }
+  }
+};
+
+const $ = (id) => document.getElementById(id);
+const money = (n) => "$" + Math.round(n).toLocaleString("en-US");
+const money2 = (n) => "$" + n.toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2});
+const pct = (r) => (r * 100).toFixed(3).replace(/\.?0+$/, "") + "%";
+// Display rates with two decimals for market/custom display (exact slider value shown separately).
+const pct2 = (r) => (r * 100).toFixed(2) + "%";
+
+function monthlyPI(loan, annualRate) {
+  const r = annualRate / 12, n = CONFIG.termMonths;
+  if (r === 0) return loan / n;
+  return loan * r / (1 - Math.pow(1 + r, -n));
+}
+
+function components(price, prog, annualRate) {
+  const down = price * prog.down;
+  const baseLoan = price - down;
+  const upfrontFee = baseLoan * prog.upfront;
+  const finalLoan = baseLoan + upfrontFee;
+  const pi = monthlyPI(finalLoan, annualRate);
+  const tax = price * CONFIG.taxRateAnnual / 12;
+  const ins = CONFIG.insuranceMonthly;
+  const fee = baseLoan * prog.annualFee / 12;
+  return { down, baseLoan, upfrontFee, finalLoan, pi, tax, ins, fee, total: pi + tax + ins + fee };
+}
+
+// Binary-search the largest price whose total fits the budget, then
+// round DOWN to the nearest $1,000. Displayed total is the sum of the
+// displayed (rounded) breakdown components, so the breakdown reconciles
+// exactly; if that sum would exceed the budget, drop another $1,000.
+function solve(rent, prog, annualRate) {
+  if (!(rent > 0)) return null;
+  let lo = 0, hi = Math.max(rent * 300, 1000);
+  for (let i = 0; i < 80; i++) {
+    const mid = (lo + hi) / 2;
+    if (components(mid, prog, annualRate).total <= rent) lo = mid; else hi = mid;
+  }
+  let price = Math.floor(lo / 1000) * 1000;
+  let c = components(price, prog, annualRate);
+  let displayed = Math.round(c.pi) + Math.round(c.tax) + Math.round(c.ins) + Math.round(c.fee);
+  while (price > 0 && displayed > rent) {
+    price -= 1000;
+    c = components(price, prog, annualRate);
+    displayed = Math.round(c.pi) + Math.round(c.tax) + Math.round(c.ins) + Math.round(c.fee);
+  }
+  return { price, c, displayed };
+}
+
+let rateMode = "market";
+let marketRate = CONFIG.market.rate;
+let marketDate = CONFIG.market.date;
+let marketSource = CONFIG.market.source;
+let marketBasis = CONFIG.market.basis;
+let offlineNote = "";
+
+// Restore last-used preferences from this device only.
+try {
+  const saved = JSON.parse(localStorage.getItem("rent-to-home") || "{}");
+  if (saved.rent) $("rent").value = saved.rent;
+  if (saved.program && CONFIG.programs[saved.program]) {
+    document.querySelector('input[name="program"][value="' + saved.program + '"]').checked = true;
+  }
+  if (saved.rateMode === "custom") setMode("custom");
+  if (saved.customRate) { $("custom-rate").value = saved.customRate; }
+} catch (e) { /* storage unavailable: calculator still works */ }
+
+function selectedProgram() {
+  const el = document.querySelector('input[name="program"]:checked');
+  return CONFIG.programs[el ? el.value : "fha"];
+}
+function currentRate() {
+  return rateMode === "market" ? marketRate : parseFloat($("custom-rate").value) / 100;
+}
+function savePrefs() {
+  try {
+    localStorage.setItem("rent-to-home", JSON.stringify({
+      rent: $("rent").value,
+      program: document.querySelector('input[name="program"]:checked').value,
+      rateMode, customRate: $("custom-rate").value
+    }));
+  } catch (e) {}
+}
+function setMode(mode) {
+  rateMode = mode;
+  $("btn-market").setAttribute("aria-pressed", mode === "market" ? "true" : "false");
+  $("btn-custom").setAttribute("aria-pressed", mode === "custom" ? "true" : "false");
+  $("custom-wrap").hidden = mode !== "custom";
+  render();
+}
+$("btn-market").addEventListener("click", () => setMode("market"));
+$("btn-custom").addEventListener("click", () => setMode("custom"));
+$("custom-rate").addEventListener("input", () => {
+  $("custom-rate-display").textContent = pct2(parseFloat($("custom-rate").value) / 100);
+  render();
+});
+
+function render() {
+  const rentRaw = $("rent").value;
+  const rent = parseFloat(rentRaw);
+  const prog = selectedProgram();
+  $("program-note").textContent = prog.note;
+  $("custom-rate-display").textContent = pct2(parseFloat($("custom-rate").value) / 100);
+  const err = $("rent-error");
+  if (rentRaw === "" || isNaN(rent) || rent < 0) {
+    err.hidden = false; err.textContent = "Enter a monthly rent of $0 or more.";
+    $("price").textContent = "—"; $("total-payment").textContent = "—";
+    $("down-payment").textContent = "—"; return;
+  }
+  err.hidden = true;
+  const rate = currentRate();
+  const result = solve(rent, prog, rate);
+  if (!result || result.price === 0) {
+    $("floor-note").hidden = false;
+    $("price").textContent = "$0";
+    $("total-payment").textContent = money(CONFIG.insuranceMonthly);
+    $("down-payment").textContent = "$0";
+  } else {
+    $("floor-note").hidden = true;
+    $("price").textContent = money(result.price);
+    $("total-payment").textContent = money(result.displayed);
+    $("down-payment").textContent = money(result.c.down);
+  }
+  $("program-out").textContent = prog.label;
+  $("rate-out").textContent = pct2(rate);
+  const c = result ? result.c : components(0, prog, rate);
+  $("bd-pi").textContent = money(c.pi);
+  $("bd-tax").textContent = money(c.tax);
+  $("bd-ins").textContent = money(c.ins);
+  $("bd-fee-label").textContent = prog.feeLabel;
+  $("bd-fee").textContent = prog.annualFee ? money(c.fee) : "—";
+  $("bd-total").textContent = result ? money(result.displayed) : money(c.total);
+  $("assumptions").textContent =
+    "Assumptions: " + prog.label + ", 30-year fixed, " + pct2(rate) + "; down payment " + pct(prog.down) +
+    "; financed upfront fee " + (prog.upfront ? money(c.upfrontFee) + " (" + pct(prog.upfront) + " of the base loan)" : "none") +
+    "; property taxes estimated at 1.75% of purchase price per year; homeowners insurance $175/month; HOA $0.";
+  if (rateMode === "market") {
+    $("rate-line").textContent = "Market rate: " + pct2(marketRate) + " · " + marketSource + ", " + marketDate +
+      " · Applied to all programs as a labeled proxy (no free public FHA/USDA/VA benchmark was found) · Not a lender quote." +
+      (offlineNote ? " " + offlineNote : "");
+  } else {
+    $("rate-line").textContent = "Custom rate: " + pct2(rate) + " · You set this rate; it is not a lender quote.";
+  }
+  savePrefs();
+}
+
+$("rent").addEventListener("input", render);
+document.querySelectorAll('input[name="program"]').forEach(el => el.addEventListener("change", render));
+
+$("copy-btn").addEventListener("click", async () => {
+  const rent = parseFloat($("rent").value);
+  if (isNaN(rent) || rent < 0) { $("copy-status").textContent = "Enter a rent first."; return; }
+  const prog = selectedProgram(), rate = currentRate();
+  const result = solve(rent, prog, rate);
+  const price = result ? result.price : 0;
+  const down = result ? result.c.down : 0;
+  const total = result ? result.displayed : 0;
+  const text = [
+    "Rent-to-Home Estimate", "",
+    "Current rent: " + money(rent) + "/month", "",
+    "Mortgage: " + prog.label + ", 30-year fixed", "",
+    "Interest rate: " + pct2(rate),
+    "Estimated home purchase price: " + money(price),
+    "Estimated down payment: " + money(down),
+    "Estimated monthly mortgage payment: " + money(total), "",
+    "Includes estimated principal, interest, property taxes, homeowners insurance, and applicable mortgage insurance.", "",
+    "Educational estimate only. Not a mortgage preapproval."
+  ].join("\n");
+  try {
+    await navigator.clipboard.writeText(text);
+    $("copy-status").textContent = "Copied.";
+  } catch (e) {
+    const ta = document.createElement("textarea");
+    ta.value = text; document.body.appendChild(ta); ta.select();
+    try { document.execCommand("copy"); $("copy-status").textContent = "Copied."; }
+    catch (e2) { $("copy-status").textContent = "Copy failed. Select the text manually."; }
+    ta.remove();
+  }
+});
+
+// Market rates: try the shipped rates.json first (service worker caches
+// it, so a previously verified rate survives offline). On failure, keep
+// the embedded config rate above and say so; never invent a live rate.
+async function loadMarketRates() {
+  if (!navigator.onLine) offlineNote = "Offline: using the saved market rate from " + marketDate + ". This rate is not current while offline.";
+  try {
+    const res = await fetch("rates.json", { cache: "no-store" });
+    if (res.ok) {
+      const data = await res.json();
+      if (data && typeof data.rate === "number" && data.rate > 0) {
+        marketRate = data.rate; marketDate = data.date || marketDate;
+        marketSource = data.source || marketSource;
+        try { localStorage.setItem("rent-to-home-market", JSON.stringify(data)); } catch (e) {}
+      }
+    }
+  } catch (e) {
+    try {
+      const saved = JSON.parse(localStorage.getItem("rent-to-home-market") || "null");
+      if (saved && typeof saved.rate === "number") {
+        marketRate = saved.rate; marketDate = saved.date || marketDate;
+        offlineNote = "Rate source unavailable: using the most recently saved verified rate from " + marketDate + ".";
+      }
+    } catch (e2) {}
+    if (!offlineNote) offlineNote = "Rate source unavailable: using the embedded rate from " + marketDate + ".";
+  }
+  render();
+}
+
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("sw.js", { scope: "./" }).catch(() => {});
+  });
+}
+loadMarketRates();
+render();
+</script>
+</body>
+</html>
