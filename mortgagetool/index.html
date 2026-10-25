@@ -72,6 +72,7 @@
       <div class="programs" role="radiogroup" aria-label="Loan program">
         <label class="prog"><input type="radio" name="program" value="fha" checked> FHA <small>3.5% down</small></label>
         <label class="prog"><input type="radio" name="program" value="conventional"> Conventional 97 <small>3% down*</small></label>
+        <label class="prog"><input type="radio" name="program" value="conventional20"> Conventional 20% <small>20% down · no PMI</small></label>
         <label class="prog"><input type="radio" name="program" value="usda"> USDA <small>0% down</small></label>
         <label class="prog"><input type="radio" name="program" value="va"> VA <small>0% down</small></label>
       </div>
@@ -166,6 +167,11 @@ const CONFIG = {
       label: "Conventional 97", down: 0.03, upfront: 0, annualFee: 0.0070,
       feeLabel: "Mortgage insurance (PMI, estimated)",
       note: "*Conventional 97: 3% down only for a qualifying first-time buyer (at least one borrower with no ownership interest in the last 3 years, 1-unit primary residence, homebuyer education). The standard conventional minimum is otherwise 5% down. PMI is an estimate at 0.70% per year of the original loan balance and depends heavily on credit score and LTV (published ranges run roughly 0.46% to 1.50%); PMI can be cancelled at 80% LTV and ends automatically at 78%."
+    },
+    conventional20: {
+      label: "Conventional 20%", down: 0.20, upfront: 0, annualFee: 0,
+      feeLabel: "Mortgage insurance (PMI) — none at 20% down",
+      note: "Conventional 20%: 20% down. At 80% loan-to-value or less, no private mortgage insurance is required, so this estimate includes no monthly PMI. Note: 20% is the no-PMI threshold, not the conventional minimum — the minimum is 5% for most borrowers (3% only under Conventional 97 for a qualifying first-time buyer)."
     },
     usda: {
       label: "USDA", down: 0, upfront: 0.01, annualFee: 0.0035,
