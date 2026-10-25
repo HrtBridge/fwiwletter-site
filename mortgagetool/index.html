@@ -71,7 +71,7 @@
       <legend>Loan program</legend>
       <div class="programs" role="radiogroup" aria-label="Loan program">
         <label class="prog"><input type="radio" name="program" value="fha" checked> FHA <small>3.5% down</small></label>
-        <label class="prog"><input type="radio" name="program" value="conventional"> Conventional <small>3% down</small></label>
+        <label class="prog"><input type="radio" name="program" value="conventional"> Conventional 97 <small>3% down*</small></label>
         <label class="prog"><input type="radio" name="program" value="usda"> USDA <small>0% down</small></label>
         <label class="prog"><input type="radio" name="program" value="va"> VA <small>0% down</small></label>
       </div>
@@ -160,22 +160,22 @@ const CONFIG = {
     fha: {
       label: "FHA", down: 0.035, upfront: 0.0175, annualFee: 0.0055,
       feeLabel: "Mortgage insurance (MIP)",
-      note: "FHA: 3.5% down. 1.75% upfront MIP financed into the loan. Monthly MIP is 0.55% per year of the base loan amount."
+      note: "FHA: 3.5% down with a 580+ credit score (500-579 requires 10% down). 1.75% upfront MIP financed into the loan. Monthly MIP is 0.55% per year of the base loan amount, and lasts the life of the loan when less than 10% is put down."
     },
     conventional: {
-      label: "Conventional", down: 0.03, upfront: 0, annualFee: 0.0070,
+      label: "Conventional 97", down: 0.03, upfront: 0, annualFee: 0.0070,
       feeLabel: "Mortgage insurance (PMI, estimated)",
-      note: "Conventional: 3% down. PMI is an estimate at 0.70% per year of the original loan balance and depends on borrower qualifications."
+      note: "*Conventional 97: 3% down only for a qualifying first-time buyer (at least one borrower with no ownership interest in the last 3 years, 1-unit primary residence, homebuyer education). The standard conventional minimum is otherwise 5% down. PMI is an estimate at 0.70% per year of the original loan balance and depends heavily on credit score and LTV (published ranges run roughly 0.46% to 1.50%); PMI can be cancelled at 80% LTV and ends automatically at 78%."
     },
     usda: {
       label: "USDA", down: 0, upfront: 0.01, annualFee: 0.0035,
       feeLabel: "Annual program fee",
-      note: "USDA: 0% down. 1.00% upfront guarantee fee financed into the loan, plus a 0.35% annual fee. Eligibility depends on property location, household income, and underwriting."
+      note: "USDA: 0% down. 1.00% upfront guarantee fee financed into the loan, plus a 0.35% annual fee (charged on the scheduled loan balance, so it eases as the balance falls; this tool uses the base loan amount as a first-year estimate). Eligibility depends on property location, household income, and underwriting."
     },
     va: {
       label: "VA", down: 0, upfront: 0.0215, annualFee: 0,
       feeLabel: "Mortgage insurance / program fee",
-      note: "VA: 0% down, no monthly mortgage insurance. Default funding fee is 2.15% financed, for a first-use, nonexempt borrower with less than 5% down, subject to current VA rules. VA eligibility is required and some borrowers are exempt from the funding fee."
+      note: "VA: 0% down, no monthly mortgage insurance. Default funding fee is 2.15% financed, for a first-use, nonexempt borrower with less than 5% down (subsequent use with less than 5% down is 3.30%), subject to current VA rules. VA eligibility is required and some borrowers are exempt from the funding fee."
     }
   }
 };
