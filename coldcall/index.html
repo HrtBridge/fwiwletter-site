@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cold Call Navigator — Internal Tool</title>
+<meta name="description" content="Internal cold-call decision tree for Brent and Nicole Rosenauer, Stroud &amp; Associates.">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#1a2e4a">
+<style>
+:root{--bg:#f7f4ec;--card:#fffdf7;--ink:#1c2430;--muted:#5d6a7a;--line:#ddd5c2;--accent:#1a2e4a;--accent2:#b9975b;--good:#2e7d4f;--warn:#8a5a00;--danger:#9b2c2c}
+[data-theme="dark"]{--bg:#141a24;--card:#1e2836;--ink:#eef1f5;--muted:#9fb0c3;--line:#334155;--accent:#d9b878;--accent2:#d9b878;--good:#6fbf8f;--warn:#e5b95c;--danger:#f08080}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#141a24;--card:#1e2836;--ink:#eef1f5;--muted:#9fb0c3;--line:#334155;--accent:#d9b878;--accent2:#d9b878;--good:#6fbf8f;--warn:#e5b95c;--danger:#f08080}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.5}
+header{position:sticky;top:0;background:var(--card);border-bottom:2px solid var(--accent2);padding:.6rem .9rem;z-index:10}
+header h1{font-size:1.05rem;margin:0}
+header p{margin:.1rem 0 0;color:var(--muted);font-size:.85rem}
+main{max-width:720px;margin:0 auto;padding:1rem .9rem 3rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:1.1rem;margin:.9rem 0;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.stage{font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.qid{font-size:.8rem;color:var(--muted)}
+h2{font-size:1.35rem;line-height:1.35;margin:.3rem 0 .8rem}
+h3{font-size:1.05rem;margin:1rem 0 .4rem}
+p{margin:.5rem 0}
+.small{font-size:.85rem;color:var(--muted)}
+button,.btn{display:block;width:100%;text-align:left;background:var(--accent);color:#fff;border:0;border-radius:12px;padding:.95rem 1rem;margin:.55rem 0;font-size:1.05rem;line-height:1.35;cursor:pointer}
+button.secondary,.btn.secondary{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+button.ghost,.btn.ghost{background:transparent;color:var(--accent);border:0;padding:.6rem .2rem;width:auto;display:inline-block}
+button.danger{background:var(--danger)}
+button:active{transform:scale(.99)}
+label{display:block;font-weight:600;margin:.8rem 0 .25rem}
+input[type="text"],input[type="email"],input[type="number"],input[type="date"],textarea,select{width:100%;padding:.8rem;border:1.5px solid var(--line);border-radius:10px;font-size:1.02rem;background:var(--bg);color:var(--ink)}
+textarea{min-height:90px;resize:vertical}
+.toolbar{display:flex;flex-wrap:wrap;gap:.4rem;margin:.6rem 0}
+.toolbar button{width:auto;display:inline-block;padding:.55rem .8rem;font-size:.92rem;margin:0}
+.toolbar button.secondary{padding:.55rem .8rem}
+.progress{height:8px;background:var(--line);border-radius:99px;overflow:hidden;margin:.5rem 0}
+.progress>div{height:100%;background:var(--accent2);width:0%}
+.chiprow{display:flex;flex-wrap:wrap;gap:.4rem;margin:.4rem 0}
+.chiprow button{width:auto;padding:.5rem .8rem;font-size:.9rem;margin:0;background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+.chiprow button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.feat{display:flex;align-items:center;justify-content:space-between;gap:.5rem;padding:.45rem 0;border-bottom:1px solid var(--line)}
+.feat span{flex:1}
+.feat button{width:auto;padding:.4rem .6rem;font-size:.85rem;margin:0}
+.feat button.on{background:var(--good)}
+details{border:1px solid var(--line);border-radius:10px;padding:.6rem .8rem;margin:.7rem 0}
+details summary{font-weight:700;cursor:pointer}
+.tree-node{border-left:4px solid var(--accent2);padding:.35rem .7rem;margin:.35rem 0}
+.tree-node button{width:auto;display:inline-block;padding:.3rem .6rem;font-size:.85rem;margin:.2rem 0 0}
+.hidden{display:none!important}
+.notice{border:1.5px solid var(--warn);border-radius:10px;padding:.7rem .9rem;margin:.7rem 0}
+.notice strong{color:var(--warn)}
+.ok{color:var(--good);font-weight:700}
+a{color:var(--accent)}
+</style>
+</head>
+<body>
+<header>
+<h1>Cold Call Navigator</h1>
+<p>Internal tool — Brent &amp; Nicole Rosenauer, Stroud &amp; Associates. Not for distribution.</p>
+<div class="toolbar" role="navigation" aria-label="Call controls">
+<button type="button" class="secondary" id="btnBack">← Back</button>
+<button type="button" class="secondary" id="btnSkip">Skip</button>
+<button type="button" class="secondary" id="btnJump">Jump to stage</button>
+<button type="button" class="secondary" id="btnTree">Full tree</button>
+<button type="button" class="secondary" id="btnTheme">Dark / light</button>
+<button type="button" class="secondary" id="btnNew">New call</button>
+<button type="button" class="secondary" id="btnEnd">End call</button>
+</div>
+<div class="progress" aria-hidden="true"><div id="progressBar"></div></div>
+<p class="small" id="progressText" aria-live="polite"></p>
+</header>
+<main>
+<section id="screen-setup" class="card" aria-labelledby="setupTitle">
+<h2 id="setupTitle">Start a call</h2>
+<p>Enter only what you already have. Nothing here is sent anywhere, emailed, or written to Follow Up Boss or Ruuster. Drafts live only on this device.</p>
+<div class="notice"><strong>Local storage is not secure shared storage.</strong> Anyone with this device can open a saved draft. Use Delete All when you are done.</div>
+<label for="leadName">Lead name (optional)</label>
+<input type="text" id="leadName" autocomplete="off" placeholder="e.g. Sam">
+<label for="leadPhone">Phone (optional)</label>
+<input type="text" id="leadPhone" autocomplete="off" inputmode="tel" placeholder="Only if you already have it">
+<label for="leadEmail">Email (optional)</label>
+<input type="email" id="leadEmail" autocomplete="off" placeholder="Only if you already have it">
+<label for="leadId">Lead ID, if known (optional)</label>
+<input type="text" id="leadId" autocomplete="off">
+<label><input type="checkbox" id="leadSourceVerified"> Source verified in the record</label>
+<label for="leadSource">Source — only if verified (optional)</label>
+<input type="text" id="leadSource" autocomplete="off" placeholder="e.g. property inquiry — leave blank unless verified">
+<button type="button" id="btnStart">Start call → A01</button>
+<button type="button" class="secondary" id="btnResume">Resume saved draft</button>
+</section>
+
+<section id="screen-call" class="card hidden" aria-live="polite">
+<p><span class="stage" id="nodeStage"></span> · <span class="qid" id="nodeId"></span></p>
+<h2 id="nodeQuestion"></h2>
+<p class="small" id="nodeCoach"></p>
+<div id="nodeFields"></div>
+<div id="nodeOptions"></div>
+<details id="notesBox">
+<summary>Notes (collapsible)</summary>
+<textarea id="freeNotes" placeholder="Free notes for this call. Saved locally on this device only."></textarea>
+<p class="small">Notes are part of the local draft and the exported summary. They are never sent anywhere by this tool.</p>
+</details>
+<details id="altBox">
+<summary>Alternate wording (optional — does not replace the default)</summary>
+<div id="altText"></div>
+</details>
+</section>
+
+<section id="screen-tree" class="card hidden">
+<h2>Full tree overview</h2>
+<p class="small">Tap a question to jump to it. Jumping skips unanswered questions — use Back or the review panel to return. Nothing is recorded as answered until you answer it.</p>
+<div id="treeList"></div>
+<button type="button" class="secondary" id="btnTreeBack">Back to call</button>
+</section>
+
+<section id="screen-review" class="card hidden">
+<h2>Review captured answers</h2>
+<p class="small">Tap Edit to return to a question and change an answer. Skipped questions stay blank — blank is never presented as confirmed.</p>
+<div id="reviewList"></div>
+<button type="button" class="secondary" id="btnReviewBack">Back to call</button>
+</section>
+
+<section id="screen-summary" class="card hidden">
+<h2>Call summary</h2>
+<p><strong>Disposition:</strong> <span id="sumDisposition"></span> · <span id="sumDate"></span></p>
+<div id="sumBody"></div>
+<h3>FUB-ready note (editable before copying)</h3>
+<textarea id="fubNote" rows="10"></textarea>
+<button type="button" id="btnCopyFub">Copy FUB note</button>
+<h3>Ruuster setup checklist (manual — integration NOT verified)</h3>
+<div class="notice"><strong>Ruuster mapping is not verified.</strong> <code>confirmed_in_ruuster: false</code>. Use this as a manual setup checklist. This tool does not write to Ruuster, and a nice-to-have must never be used to exclude a home.</div>
+<div id="ruusterList"></div>
+<textarea id="ruusterText" rows="10"></textarea>
+<button type="button" id="btnCopyRuuster">Copy Ruuster checklist</button>
+<h3>Draft controls</h3>
+<div class="toolbar">
+<button type="button" class="secondary" id="btnExport">Export draft (JSON)</button>
+<button type="button" class="secondary" id="btnReview">Review / edit answers</button>
+<button type="button" class="danger" id="btnDeleteAll">Delete all (this draft)</button>
+<button type="button" class="secondary" id="btnNew2">New call</button>
+</div>
+<p class="small" id="copyStatus" aria-live="polite"></p>
+</section>
+</main>
+<script>
+"use strict";
+/* Cold Call Navigator — data-driven tree.
+   Scripted question wording is preserved exactly from the specification.
+   Nothing in this file is transmitted anywhere: no analytics, no network
+   calls, no FUB/Ruuster writes, no email or text sends. Drafts live only
+   in this device's localStorage. */
+var STAGES = { opening: "Opening", preferences: "Preferences", motivation: "Motivation", setup: "Setup & close", outcome: "Outcome" };
+var FEATURES = ["Big yard", "Fence", "Garage spaces", "Basement", "Acreage / land", "Workshop", "Pool", "Fireplace", "Kitchen", "Natural light", "Parking", "Year built"];
+var ALT_BANK = [
+  { for: "A01", text: "“[Name], if I told you I was a realtor, would you hang up immediately, or would you give me 60 seconds to explain why I'm calling?”" },
+  { for: "General", text: "“I know you're not gonna buy a property or sell a property here over the phone, but I was hoping we could daydream together. Is that something you might be interested in doing?”" },
+  { for: "General", text: "“You don't buy a new home the same way you might buy pest control or a new phone.”" },
+  { for: "General", text: "“One day, maybe years down the road, the perfect home will jump out at you.”" },
+  { for: "A03", text: "“Would there be any benefit, if any, to seeing that list of homes with your specifications on a regular basis?”" },
+  { for: "A05", text: "“Our 60 seconds is up. Would you mind giving me just a few minutes more to get you into the system?”" },
+  { for: "General", text: "“The easiest way to start to narrow it down is to look at price, location, and home size.”" },
+  { for: "B09", text: "“Are there any specific, ‘Oh man, I hate that whenever I see a new home,’ things that I should avoid for you?”" },
+  { for: "C02", text: "“If the perfect home jumped out at you two months from now, would you be ready and willing to give me a call?”" },
+  { for: "C03", text: "“What do you think the biggest obstacle, if any, would be to making that switch soon?”" },
+  { for: "X10", text: "“Is finances something that you'd like expert help with, or do you prefer to do that research on your own?”" },
+  { for: "X07", text: "“If you could change just one thing about where you're living now, what would it be?”" },
+  { for: "D04", text: "“What would be the benefit, if any, of me giving you a callback here in the next month?”" },
+  { for: "D05", text: "“Are Friday afternoons or Saturday afternoons better for you?” (only when appropriate)" },
+  { for: "D03", text: "“Can you do me one huge favor? I'm going to send you a text with my contact information. Would you save that, even as Brent — Realtor?” (only if they agree to the text)" },
+  { for: "D06 / D07", text: "“Do you have any questions for me? I feel like I've been doing a lot of talking here on the phone.”" }
+];
+
+/* Node shape: { id, stage, title, q, coach, kind, options, fields, next }
+   kind: "choice" (tap a prospect response) | "capture" (fields + Continue)
+         | "info" (read + Continue). options: [{label, to, set}].
+   Every destination is validated by the test script in /coldcall/tree-test.js. */
+var TREE = [
+{ id: "A01", stage: "opening", title: "Open", kind: "choice",
+  q: "“Hey [Name], this is Brent. If I told you I was a realtor, would you hang up immediately, or would you give me 60 seconds to explain why I'm calling?”",
+  coach: "If they ask why: identify yourself honestly as Brent with Stroud & Associates, then continue.",
+  options: [
+    { label: "Gives permission", to: "A02" },
+    { label: "Asks why you're calling", to: "A02", note: "Identify honestly first, then continue." },
+    { label: "Declines", to: "X01" } ] },
+{ id: "A02", stage: "opening", title: "Acknowledge", kind: "info",
+  q: "“I appreciate that. Our 60 seconds starts now.”", next: "A03" },
+{ id: "A03", stage: "opening", title: "Value", kind: "choice",
+  q: "“I'm with Stroud & Associates. We help people keep an eye on homes across Missouri and Kansas, even if they're just daydreaming. I can put together a personalized list of homes matching what they'd actually want to see. Would there be any benefit, if any, to something like that?”",
+  options: [
+    { label: "Interested", to: "A04" },
+    { label: "Skeptical", to: "X02" },
+    { label: "Already has an agent", to: "X03" },
+    { label: "Asks how you got their number", to: "X04" },
+    { label: "Declines", to: "X01" } ] },
+{ id: "A04", stage: "opening", title: "Value discovery", kind: "capture",
+  q: "“What do you think the biggest benefit would be for you?”",
+  fields: [ { key: "benefit", label: "Biggest benefit (their words)", type: "textarea" } ],
+  next: "A05",
+  options: [ { label: "Unsure — continue anyway", to: "A05" } ] },
+{ id: "A05", stage: "opening", title: "Renew permission", kind: "choice",
+  q: "“Looks like our 60 seconds is up. Would you mind giving me another couple of minutes to narrow down what you'd like to see?”",
+  options: [
+    { label: "Yes", to: "B01" },
+    { label: "Busy right now", to: "X05" },
+    { label: "No", to: "X01" } ] },
+{ id: "B01", stage: "preferences", title: "Location", kind: "capture",
+  q: "“Where would you want to daydream about a new home? We can think in city names.”",
+  fields: [ { key: "location", label: "Cities, areas, states, radius, exclusions, or flexible", type: "textarea" } ],
+  next: "B02" },
+{ id: "B02", stage: "preferences", title: "Property type", kind: "capture",
+  q: "“Are we thinking a single-family home, townhouse, condo, or something different?”",
+  fields: [
+    { key: "propertyType", label: "Property type", type: "chips", options: ["Single-family", "Townhouse", "Condo", "Something different"] },
+    { key: "propertyTypeOther", label: "Something different / detail", type: "text" } ],
+  next: "B03" },
+{ id: "B03", stage: "preferences", title: "Price", kind: "capture",
+  q: "“What price range would you want to explore? I like to think in $50,000 increments.”",
+  fields: [
+    { key: "priceMin", label: "Price minimum ($)", type: "number" },
+    { key: "priceMax", label: "Price maximum ($)", type: "number" },
+    { key: "priceBasis", label: "Aspirational or feasible?", type: "select", options: ["", "Aspirational", "Feasible", "Both / unsure"] } ],
+  next: "B04",
+  options: [ { label: "Unsure about price", to: "X06" } ] },
+{ id: "B04", stage: "preferences", title: "Beds / baths", kind: "capture",
+  q: "“How many bedrooms and bathrooms would feel right?”",
+  fields: [
+    { key: "bedsMin", label: "Minimum bedrooms", type: "number" },
+    { key: "bathsFull", label: "Full bathrooms", type: "number" },
+    { key: "bathsTotal", label: "Total bathrooms", type: "number" } ],
+  next: "B05" },
+{ id: "B05", stage: "preferences", title: "Home size", kind: "capture",
+  q: "“How much living space are we picturing? Maybe 1,500, 2,000, or 2,500 square feet?”",
+  fields: [
+    { key: "sqftDesired", label: "Desired square feet", type: "number" },
+    { key: "sqftMin", label: "Minimum square feet", type: "number" },
+    { key: "sqftNote", label: "Range or flexible?", type: "text" } ],
+  next: "B06" },
+{ id: "B06", stage: "preferences", title: "Home style", kind: "capture",
+  q: "“Do you picture a ranch with everything on one level, a two-story, or are you open to either?”",
+  fields: [
+    { key: "stories", label: "Stories", type: "select", options: ["", "Ranch / one level", "Two-story", "Split-level", "Other", "Flexible / either"] },
+    { key: "archStyle", label: "Architectural style", type: "text" } ],
+  next: "B07" },
+{ id: "B07", stage: "preferences", title: "Condition", kind: "capture",
+  q: "“Would you prefer something move-in ready, or would you consider a home that needs a little work?”",
+  fields: [
+    { key: "condition", label: "Condition", type: "select", options: ["", "Move-in ready", "Cosmetic work OK", "Fixer-upper", "Major rehab", "Flexible"] } ],
+  next: "B08" },
+{ id: "B08", stage: "preferences", title: "Dream features", kind: "capture",
+  q: "“Magic wand question: what would make a home feel perfect to you? A big yard, basement, garage, workshop, something else?”",
+  coach: "Optional prompts: “Would a garage be important? One car or two?” · “Is a basement something you'd want?” · “What about the yard? Small and manageable, or room to spread out?” · “Would you consider an older home, or prefer something newer?” Mark each feature must-have, nice-to-have, or no preference. Never exclude a home for a nice-to-have.",
+  fields: [
+    { key: "features", label: "Features — must-have / nice-to-have / no preference", type: "featurelist" },
+    { key: "garageSpaces", label: "Garage spaces (if mentioned)", type: "text" },
+    { key: "lotAcreage", label: "Lot / acreage (if mentioned)", type: "text" },
+    { key: "featuresOther", label: "Other dream features", type: "textarea" } ],
+  next: "B09" },
+{ id: "B09", stage: "preferences", title: "Deal-breakers", kind: "capture",
+  q: "“Is there anything that makes you immediately say, ‘Oh, I hate that,’ when you see a home?”",
+  coach: "Separate hard exclusions from dislikes — only hard exclusions filter a search.",
+  fields: [
+    { key: "dealBreakers", label: "Hard exclusions (busy road, stairs, repairs, etc.)", type: "textarea" },
+    { key: "dislikes", label: "Dislikes (not hard exclusions)", type: "textarea" } ],
+  next: "C01" },
+{ id: "C01", stage: "motivation", title: "Why not stay", kind: "choice",
+  q: "“Let me ask you something. Moving is a pretty big decision. What's keeping you from just staying right where you are?”",
+  options: [
+    { label: "Happy with current home", to: "X07" },
+    { label: "Wants a change", to: "X08" },
+    { label: "Renting", to: "X09" },
+    { label: "Just browsing / declines to elaborate", to: "C02" } ] },
+{ id: "X07", stage: "motivation", title: "Happy staying", kind: "capture",
+  q: "“That's a pretty good reason to stay! If you could change just one thing about where you're living now, what would it be?”",
+  fields: [ { key: "oneChange", label: "One thing they'd change", type: "textarea" } ],
+  next: "C02",
+  options: [ { label: "Nothing — happy as is", to: "D01" } ] },
+{ id: "X08", stage: "motivation", title: "Wants change", kind: "capture",
+  q: "“What would you most want to be different?”",
+  fields: [ { key: "wantDifferent", label: "What they'd most want different", type: "textarea" } ],
+  next: "C02" },
+{ id: "X09", stage: "motivation", title: "Renting", kind: "capture",
+  q: "“What do you like about renting right now, and is there anything you'd change?”",
+  coach: "Never assume ownership is right for them.",
+  fields: [
+    { key: "rentLikes", label: "What they like about renting", type: "textarea" },
+    { key: "rentChange", label: "What they'd change about renting", type: "textarea" } ],
+  next: "C02" },
+{ id: "C02", stage: "motivation", title: "Timing", kind: "choice",
+  q: "“If the perfect home appeared two or three months from now, would you seriously consider moving, or are we daydreaming further down the road?”",
+  options: [
+    { label: "Soon — would seriously consider", to: "C03", set: { timeline: "Soon (2–3 months)" } },
+    { label: "Later / still browsing", to: "D01", set: { timeline: "Later / browsing" } } ] },
+{ id: "C03", stage: "motivation", title: "Obstacle", kind: "choice",
+  q: "“What do you think the biggest obstacle, if any, would be to making that switch?”",
+  options: [
+    { label: "Financing", to: "X10", set: { obstacle: "Financing" } },
+    { label: "Needs to sell first", to: "X11", set: { obstacle: "Needs to sell" } },
+    { label: "Other / none", to: "D01", set: { obstacle: "Other / none" } } ] },
+{ id: "X10", stage: "motivation", title: "Financing", kind: "choice",
+  q: "“Would it be helpful to connect with someone who could walk through the financing possibilities, or would you rather research that independently?”",
+  coach: "Don't guarantee loans or ask for private financial data.",
+  options: [
+    { label: "Connect them with financing help", to: "D01", set: { financingHelp: "Wants a financing connection" } },
+    { label: "Prefers independent research", to: "D01", set: { financingHelp: "Prefers independent research" } } ] },
+{ id: "X11", stage: "motivation", title: "Selling", kind: "choice",
+  q: "“Would understanding what your current home might sell for help you think through your options?”",
+  options: [
+    { label: "Yes — helpful", to: "D01", set: { needsToSell: "Yes — a home-value conversation would help" } },
+    { label: "No", to: "D01", set: { needsToSell: "No" } } ] },
+{ id: "D01", stage: "setup", title: "Offer search", kind: "choice",
+  q: "“I think we've got a pretty good starting point. Would you like me to set up those property matches for you?”",
+  options: [
+    { label: "Yes", to: "D02", set: { searchAgreed: "Yes" } },
+    { label: "No", to: "X01", set: { searchAgreed: "No" } } ] },
+{ id: "D02", stage: "setup", title: "Email and frequency", kind: "capture",
+  q: "",
+  coach: "Verify the address. Explicit opt-in only. Never enroll silently.",
+  fields: [
+    { key: "emailConfirmed", label: "Best email for matches", type: "email" },
+    { key: "emailFrequency", label: "Match frequency", type: "select", options: ["", "Daily", "Weekly", "Occasionally"] },
+    { key: "emailOptIn", label: "Explicit opt-in to these emails?", type: "select", options: ["", "Yes — opted in", "No"] } ],
+  next: "D03",
+  options: [
+    { label: "Declines email", to: "D02_DECLINE" } ] },
+{ id: "D02_DECLINE", stage: "setup", title: "Email declined", kind: "choice",
+  q: "“No problem — I won't enroll you in emails. Would a one-time text with my contact information be OK instead, or should I leave it there?”",
+  coach: "No enrollment without opt-in. A one-time text only if appropriate.",
+  options: [
+    { label: "Offer the one-time text", to: "D03", set: { emailOptIn: "Declined — no enrollment", emailFrequency: "None" } },
+    { label: "Leave it there", to: "X01", set: { emailOptIn: "Declined — no enrollment", emailFrequency: "None" } } ] },
+{ id: "D03", stage: "setup", title: "Text contact", kind: "choice",
+  q: "“Would it be helpful if I sent you a quick text with my contact information, so you can reach me if something catches your eye?”",
+  coach: "Consent here covers this one text only.",
+  options: [
+    { label: "Yes — send the text", to: "D04", set: { textConsent: "Yes — one-time contact-info text only" } },
+    { label: "No text", to: "D04", set: { textConsent: "No" } } ] },
+{ id: "D04", stage: "setup", title: "Reverse follow-up", kind: "choice",
+  q: "“What would be the benefit, if any, of me giving you a callback in a month to see whether anything stood out?”",
+  options: [
+    { label: "Agrees to a callback", to: "D05", set: { callbackAgreed: "Yes" } },
+    { label: "Prefers to initiate contact", to: "D06", set: { callbackAgreed: "No — prospect-led" } },
+    { label: "Declines future contact", to: "X01", set: { callbackAgreed: "No — declines future contact" } } ] },
+{ id: "D05", stage: "setup", title: "Callback time", kind: "capture",
+  q: "“Would mornings or afternoons generally work better for you? And which day is easiest?”",
+  fields: [
+    { key: "callbackWindow", label: "Mornings or afternoons", type: "select", options: ["", "Mornings", "Afternoons", "Either"] },
+    { key: "callbackDay", label: "Easiest day", type: "text" },
+    { key: "callbackDate", label: "Confirmed date / time", type: "text" },
+    { key: "callbackTz", label: "Time zone", type: "text" } ],
+  next: "D07" },
+{ id: "D06", stage: "setup", title: "Prospect-led", kind: "capture",
+  q: "“That works. I'll let you take the lead. Is there anything about real estate you've been curious about?”",
+  fields: [ { key: "curiousAbout", label: "What they're curious about", type: "textarea" } ],
+  next: "D08" },
+{ id: "D07", stage: "setup", title: "Last question", kind: "capture",
+  q: "“Before I let you go, is there anything about real estate you've been curious about that I might be able to answer?”",
+  fields: [ { key: "curiousAbout", label: "What they're curious about", type: "textarea" } ],
+  next: "D08" },
+{ id: "D08", stage: "setup", title: "Close", kind: "info",
+  q: "“I appreciate you taking the time to talk with me. Have a wonderful day!”",
+  next: "END" },
+{ id: "X01", stage: "outcome", title: "Exit", kind: "capture",
+  q: "“Absolutely. I appreciate your time. Have a good day.”",
+  coach: "Record the distinction: an ordinary decline is not the same as an explicit do-not-contact. Honor every opt-out.",
+  fields: [
+    { key: "optOut", label: "Opt-out type", type: "chips", options: ["Ordinary decline", "Do not call", "Do not text", "Do not email"] } ],
+  next: "END" },
+{ id: "X02", stage: "outcome", title: "Skeptical", kind: "choice",
+  q: "“There's no obligation to buy. It's just a personalized way to see homes that match what you like. Would that be useful?”",
+  options: [
+    { label: "Interested", to: "A04" },
+    { label: "No", to: "X01" } ] },
+{ id: "X03", stage: "outcome", title: "Has agent", kind: "info",
+  q: "“I understand. I don't want to interfere with that relationship. Thanks for letting me know.”",
+  coach: "Respect existing representation. Record it and step back.",
+  next: "X01" },
+{ id: "X04", stage: "outcome", title: "How got number", kind: "choice",
+  q: "",
+  coach: "Say the verified-source sentence ONLY when the record verifies it. Otherwise say the precise source is unverified.",
+  fields: [ { key: "sourceVerifiedAtCall", label: "Source verified in the record for this call?", type: "select", options: ["", "Yes — verified", "No — unverified"] } ],
+  options: [
+    { label: "Interested — continue", to: "A03" },
+    { label: "Declines", to: "X01" } ] },
+{ id: "X05", stage: "outcome", title: "Busy", kind: "choice",
+  q: "“Of course. Would another time be better, or would you prefer I leave it there?”",
+  options: [
+    { label: "Callback agreed", to: "X12" },
+    { label: "Declines", to: "X01" } ] },
+{ id: "X06", stage: "preferences", title: "Price unsure", kind: "capture",
+  q: "“No problem. We can keep it broad. Is there a general ceiling you'd feel comfortable exploring?”",
+  fields: [
+    { key: "priceMax", label: "General ceiling ($, or leave open)", type: "number" },
+    { key: "priceNote", label: "Price note", type: "text" } ],
+  next: "B04" },
+{ id: "X12", stage: "outcome", title: "Reschedule", kind: "capture",
+  q: "“What day and time would work better for a quick conversation?”",
+  fields: [
+    { key: "callbackDay", label: "Better day", type: "text" },
+    { key: "callbackDate", label: "Confirmed day / time", type: "text" },
+    { key: "callbackTz", label: "Time zone", type: "text" } ],
+  next: "D08" }
+];
+var NODE_BY_ID = {};
+TREE.forEach(function (n) { NODE_BY_ID[n.id] = n; });
+var RUUSTER_MAP = [
+  { label: "Cities / areas", value: "location", ruuster: "Location / city search (manual entry)" },
+  { label: "Property type", value: "propertyType", ruuster: "Property type filter (manual entry)" },
+  { label: "Price min / max", value: "price", ruuster: "Price range filter (manual entry)" },
+  { label: "Bedrooms (min)", value: "bedsMin", ruuster: "Bedrooms filter (manual entry)" },
+  { label: "Bathrooms", value: "baths", ruuster: "Bathrooms filter (manual entry)" },
+  { label: "Square feet", value: "sqft", ruuster: "Living-area filter (manual entry)" },
+  { label: "Stories / style", value: "style", ruuster: "Stories + architectural style (manual entry)" },
+  { label: "Condition", value: "condition", ruuster: "Condition note — verify against Ruuster fields" },
+  { label: "Must-have features", value: "mustHave", ruuster: "Apply as required filters ONLY if Ruuster supports them" },
+  { label: "Nice-to-have features", value: "niceHave", ruuster: "Do NOT use to exclude homes — preference note only" },
+  { label: "Hard exclusions", value: "dealBreakers", ruuster: "Exclusion note — verify against Ruuster fields" }
+];
+
+/* ---------- State ---------- */
+var DRAFT_KEY = "coldcall-draft-v1";
+var state = { lead: {}, answers: {}, notes: "", path: [], current: null, ended: false, disposition: "" };
+var navHistory = [];
+function $(id) { return document.getElementById(id); }
+function esc(s) {
+  return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+function saveDraft() {
+  try { localStorage.setItem(DRAFT_KEY, JSON.stringify({ lead: state.lead, answers: state.answers, notes: state.notes, path: state.path, current: state.current, ended: state.ended, disposition: state.disposition })); } catch (e) { /* storage unavailable: call continues unsaved */ }
+}
+function loadDraft() {
+  try { var raw = localStorage.getItem(DRAFT_KEY); return raw ? JSON.parse(raw) : null; } catch (e) { return null; }
+}
+function showScreen(id) {
+  ["screen-setup", "screen-call", "screen-tree", "screen-review", "screen-summary"].forEach(function (s) { $(s).classList.toggle("hidden", s !== id); });
+  window.scrollTo(0, 0);
+}
+function fillQuestion(node) {
+  var name = (state.lead.name || "").trim();
+  var q = node.q.replace(/\[Name\]/g, name || "there");
+  if (node.id === "D02") {
+    var em = (state.lead.email || state.answers.emailConfirmed || "").trim();
+    q = em
+      ? "“I've got your email as " + em + ". Is that still the best one? And would you prefer matches daily, weekly, or occasionally?”"
+      : "“What's the best email for matches? And would you prefer matches daily, weekly, or occasionally?”";
+  }
+  if (node.id === "X04") {
+    var v = state.answers.sourceVerifiedAtCall || "";
+    q = v === "No — unverified"
+      ? "“I want to be straight with you: I can't verify the precise source of your contact information from the record I have. If you don't want me contacting you, I'll respect that.”"
+      : "“Your contact information came through a property inquiry in our system. I can tell you what I have recorded, and if you don't want me contacting you, I'll respect that.”";
+  }
+  return q;
+}
+function renderField(f) {
+  var val = state.answers[f.key];
+  if (f.type === "textarea") return '<label for="f_' + f.key + '">' + esc(f.label) + '</label><textarea id="f_' + f.key + '" data-key="' + f.key + '">' + esc(val || "") + "</textarea>";
+  if (f.type === "email") return '<label for="f_' + f.key + '">' + esc(f.label) + '</label><input type="email" id="f_' + f.key + '" data-key="' + f.key + '" value="' + esc(val || "") + '">';
+  if (f.type === "number") return '<label for="f_' + f.key + '">' + esc(f.label) + '</label><input type="number" id="f_' + f.key + '" data-key="' + f.key + '" value="' + esc(val == null ? "" : val) + '" inputmode="decimal">';
+  if (f.type === "select") {
+    var opts = f.options.map(function (o) { return '<option value="' + esc(o) + '"' + (val === o ? " selected" : "") + ">" + esc(o || "—") + "</option>"; }).join("");
+    return '<label for="f_' + f.key + '">' + esc(f.label) + '</label><select id="f_' + f.key + '" data-key="' + f.key + '">' + opts + "</select>";
+  }
+  if (f.type === "chips") {
+    var cur = Array.isArray(val) ? val : (val ? [val] : []);
+    var btns = f.options.map(function (o) { return '<button type="button" class="' + (cur.indexOf(o) !== -1 ? "on" : "") + '" data-chip-key="' + f.key + '" data-chip-val="' + esc(o) + '">' + esc(o) + "</button>"; }).join("");
+    return '<label>' + esc(f.label) + '</label><div class="chiprow">' + btns + "</div>";
+  }
+  if (f.type === "featurelist") {
+    var feats = state.answers.features || {};
+    var rows = FEATURES.map(function (feat) {
+      var cur2 = feats[feat] || "No preference";
+      function fb(v) { return '<button type="button" class="' + (cur2 === v ? "on" : "") + '" data-feat="' + esc(feat) + '" data-feat-val="' + v + '">' + v + "</button>"; }
+      return '<div class="feat"><span>' + esc(feat) + "</span><span>" + fb("Must-have") + " " + fb("Nice-to-have") + " " + fb("No preference") + "</span></div>";
+    }).join("");
+    return "<label>" + esc(f.label) + "</label>" + rows;
+  }
+  return '<label for="f_' + f.key + '">' + esc(f.label) + '</label><input type="text" id="f_' + f.key + '" data-key="' + f.key + '" value="' + esc(val || "") + '">';
+}
+function readFields(node) {
+  (node.fields || []).forEach(function (f) {
+    if (f.type === "chips" || f.type === "featurelist") return; // handled by button taps
+    var el = $("f_" + f.key);
+    if (el) state.answers[f.key] = el.value;
+  });
+  state.notes = $("freeNotes") ? $("freeNotes").value : state.notes;
+}
+function renderNode() {
+  var node = NODE_BY_ID[state.current];
+  if (!node) return;
+  showScreen("screen-call");
+  $("nodeStage").textContent = STAGES[node.stage] || node.stage;
+  $("nodeId").textContent = node.id + " · " + node.title;
+  $("nodeQuestion").textContent = fillQuestion(node);
+  $("nodeCoach").textContent = node.coach || "";
+  $("freeNotes").value = state.notes || "";
+  var fieldsHtml = (node.fields || []).map(renderField).join("");
+  $("nodeFields").innerHTML = fieldsHtml;
+  // Wire chips / feature buttons
+  Array.prototype.forEach.call($("nodeFields").querySelectorAll("[data-chip-key]"), function (b) {
+    b.addEventListener("click", function () {
+      var key = b.getAttribute("data-chip-key"), val = b.getAttribute("data-chip-val");
+      var cur = state.answers[key];
+      var arr = Array.isArray(cur) ? cur.slice() : (cur ? [cur] : []);
+      var i = arr.indexOf(val);
+      if (i === -1) arr.push(val); else arr.splice(i, 1);
+      state.answers[key] = arr;
+      b.classList.toggle("on", i === -1);
+      saveDraft();
+    });
+  });
+  Array.prototype.forEach.call($("nodeFields").querySelectorAll("[data-feat]"), function (b) {
+    b.addEventListener("click", function () {
+      var feat = b.getAttribute("data-feat"), val = b.getAttribute("data-feat-val");
+      state.answers.features = state.answers.features || {};
+      state.answers.features[feat] = val;
+      var row = b.parentElement;
+      Array.prototype.forEach.call(row.querySelectorAll("button"), function (x) { x.classList.toggle("on", x === b); });
+      saveDraft();
+    });
+  });
+  var sel = $("nodeFields").querySelector('select[data-key="sourceVerifiedAtCall"]');
+  if (sel) sel.addEventListener("change", function () { state.answers.sourceVerifiedAtCall = sel.value; $("nodeQuestion").textContent = fillQuestion(node); saveDraft(); });
+  var optsHtml = "";
+  if (node.kind === "capture" || node.kind === "info") {
+    optsHtml += '<button type="button" id="btnContinue">Continue →</button>';
+  }
+  (node.options || []).forEach(function (o, i) {
+    optsHtml += '<button type="button" class="secondary" data-opt="' + i + '">' + esc(o.label) + "</button>";
+  });
+  $("nodeOptions").innerHTML = optsHtml;
+  var cont = $("btnContinue");
+  if (cont) cont.addEventListener("click", function () {
+    readFields(node);
+    // Declining email must never silently enroll: route to the decline branch.
+    if (node.id === "D02" && state.answers.emailOptIn === "No") { goTo("D02_DECLINE"); return; }
+    goTo(node.next);
+  });
+  Array.prototype.forEach.call($("nodeOptions").querySelectorAll("[data-opt]"), function (b) {
+    b.addEventListener("click", function () {
+      readFields(node);
+      var o = node.options[parseInt(b.getAttribute("data-opt"), 10)];
+      if (o.set) Object.keys(o.set).forEach(function (k) { state.answers[k] = o.set[k]; });
+      if (o.note) { /* coach note already shown; proceed */ }
+      goTo(o.to);
+    });
+  });
+  // Skip: only on capture questions (leave blank, move on). On branch
+  // questions use Jump to stage instead of guessing a prospect response.
+  $("btnSkip").style.display = node.kind === "capture" ? "" : "none";
+  $("btnSkip").onclick = function () { goTo(node.next); };
+  var total = TREE.length;
+  var pct = Math.min(100, Math.round((state.path.length / total) * 100));
+  $("progressBar").style.width = pct + "%";
+  $("progressText").textContent = "Step " + state.path.length + " · " + node.id + " — " + node.title + ". Draft saves on this device only.";
+  var alt = ALT_BANK.filter(function (a) { return a.for === node.id || a.for === "General"; });
+  $("altText").innerHTML = alt.map(function (a) { return "<p>" + esc(a.text) + "</p>"; }).join("") +
+    "<p class=\"small\">Full alternate bank is on the review screen of the spec; the defaults above are never replaced by these.</p>";
+  saveDraft();
+  var qEl = $("nodeQuestion");
+  if (qEl && qEl.focus) { /* keep focus order natural; do not steal focus mid-call */ }
+}
+function goTo(id) {
+  if (id === "END") { endCall(); return; }
+  var node = NODE_BY_ID[id];
+  if (!node) { alert("Unknown step: " + id); return; }
+  if (state.current) navHistory.push(state.current);
+  state.current = id;
+  if (state.path.indexOf(id) === -1) state.path.push(id);
+  if (id === "X03") state.answers.representation = "Already represented — do not interfere";
+  if (id === "X01") state.answers.representation = state.answers.representation || "No representation stated";
+  renderNode();
+}
+function goBack() {
+  if (navHistory.length === 0) return;
+  state.current = navHistory.pop();
+  renderNode();
+}
+function jumpToStage(stageKey) {
+  var starts = { opening: "A01", preferences: "B01", motivation: "C01", setup: "D01", outcome: "X01" };
+  var dest = starts[stageKey];
+  if (dest) { if (state.current) navHistory.push(state.current); state.current = dest; if (state.path.indexOf(dest) === -1) state.path.push(dest); renderNode(); }
+}
+function renderTree() {
+  $("treeList").innerHTML = TREE.map(function (n) {
+    return '<div class="tree-node"><strong>' + n.id + "</strong> — " + esc(n.title) + " <span class=\"small\">(" + (STAGES[n.stage] || n.stage) + ")</span><br>" +
+      '<button type="button" data-jump="' + n.id + '">Go to ' + n.id + "</button></div>";
+  }).join("");
+  Array.prototype.forEach.call($("treeList").querySelectorAll("[data-jump]"), function (b) {
+    b.addEventListener("click", function () {
+      var id = b.getAttribute("data-jump");
+      if (state.current) navHistory.push(state.current);
+      state.current = id; if (state.path.indexOf(id) === -1) state.path.push(id);
+      renderNode();
+    });
+  });
+  showScreen("screen-tree");
+}
+function featureGroups() {
+  var feats = state.answers.features || {};
+  var must = [], nice = [], none = [];
+  FEATURES.forEach(function (f) {
+    var v = feats[f] || "No preference";
+    if (v === "Must-have") must.push(f);
+    else if (v === "Nice-to-have") nice.push(f);
+    else none.push(f);
+  });
+  return { must: must, nice: nice, none: none };
+}
+function deriveDisposition() {
+  var a = state.answers, path = state.path;
+  if (a.searchAgreed === "Yes" && a.callbackAgreed === "Yes") return "Search setup agreed; callback agreed";
+  if (a.searchAgreed === "Yes") return "Search setup agreed";
+  if (path.indexOf("X12") !== -1) return "Busy — callback rescheduled";
+  if (a.representation && a.representation.indexOf("Already represented") === 0) return "Already represented — stepped back";
+  if (a.callbackAgreed === "No — declines future contact") return "Declined — no future contact";
+  if (a.optOut && a.optOut.length) return "Declined (" + a.optOut.join(", ") + ")";
+  if (path.indexOf("X01") !== -1) return "Declined";
+  return "Call ended";
+}
+function line(label, value) {
+  if (value == null || value === "" || (Array.isArray(value) && value.length === 0)) return "";
+  return label + ": " + (Array.isArray(value) ? value.join(", ") : value) + "\n";
+}
+function buildFubNote() {
+  var a = state.answers, lead = state.lead, fg = featureGroups();
+  var out = "FUB NOTE — Cold call — " + new Date().toLocaleDateString() + "\n";
+  out += line("Disposition", state.disposition);
+  out += line("Lead", lead.name);
+  out += line("Phone", lead.phone);
+  out += line("Email", a.emailConfirmed || lead.email);
+  out += line("Lead ID", lead.id);
+  out += line("Source (only if verified)", lead.sourceVerified ? lead.source : "");
+  out += line("Representation", a.representation);
+  out += line("Location", a.location);
+  out += line("Property type", [a.propertyType, a.propertyTypeOther].filter(Boolean).join(" "));
+  out += line("Price", [a.priceMin, a.priceMax].filter(function (x) { return x !== "" && x != null; }).join(" – ") + (a.priceBasis ? " (" + a.priceBasis + ")" : "") + (a.priceNote ? " — " + a.priceNote : ""));
+  out += line("Beds (min)", a.bedsMin) + line("Baths (full / total)", [a.bathsFull, a.bathsTotal].filter(function (x) { return x !== "" && x != null; }).join(" / "));
+  out += line("Sq ft (desired / min)", [a.sqftDesired, a.sqftMin].filter(function (x) { return x !== "" && x != null; }).join(" / ") + (a.sqftNote ? " — " + a.sqftNote : ""));
+  out += line("Stories / style", [a.stories, a.archStyle].filter(Boolean).join(" / "));
+  out += line("Condition", a.condition);
+  out += line("Must-have features", fg.must);
+  out += line("Nice-to-have features (do NOT exclude on these)", fg.nice);
+  out += line("Garage / lot", [a.garageSpaces, a.lotAcreage].filter(Boolean).join("; "));
+  out += line("Other features", a.featuresOther);
+  out += line("Hard exclusions", a.dealBreakers) + line("Dislikes (not exclusions)", a.dislikes);
+  out += line("Biggest benefit", a.benefit);
+  out += line("Motivation", [a.oneChange, a.wantDifferent, a.rentLikes, a.rentChange].filter(Boolean).join(" | "));
+  out += line("Timeline", a.timeline) + line("Obstacle", a.obstacle);
+  out += line("Financing help", a.financingHelp) + line("Needs to sell", a.needsToSell);
+  out += line("Email opt-in / frequency", [a.emailOptIn, a.emailFrequency].filter(Boolean).join(" / "));
+  out += line("One-time text consent", a.textConsent);
+  out += line("Callback", [a.callbackAgreed, a.callbackWindow, a.callbackDay, a.callbackDate, a.callbackTz].filter(Boolean).join(" — "));
+  out += line("Opt-outs", a.optOut);
+  out += line("Curious about", a.curiousAbout);
+  out += line("Notes", state.notes);
+  out += "NOT confirmed beyond what is written above. No Ruuster enrollment, email, text, or FUB record was created by this tool.\n";
+  return out;
+}
+function buildRuusterText() {
+  var a = state.answers, fg = featureGroups();
+  var out = "RUUSTER SETUP CHECKLIST — MANUAL (confirmed_in_ruuster: false)\n";
+  out += "Do not treat this as an integration. Enter each line by hand and verify the field exists in Ruuster / Heartland MLS Matrix.\n";
+  RUUSTER_MAP.forEach(function (m) {
+    var v = "";
+    if (m.value === "price") v = [a.priceMin, a.priceMax].filter(function (x) { return x !== "" && x != null; }).join(" – ");
+    else if (m.value === "baths") v = [a.bathsFull, a.bathsTotal].filter(function (x) { return x !== "" && x != null; }).join(" / ");
+    else if (m.value === "sqft") v = [a.sqftDesired, a.sqftMin].filter(function (x) { return x !== "" && x != null; }).join(" / ");
+    else if (m.value === "style") v = [a.stories, a.archStyle].filter(Boolean).join(" / ");
+    else if (m.value === "mustHave") v = fg.must.join(", ");
+    else if (m.value === "niceHave") v = fg.nice.join(", ");
+    else v = a[m.value] || "";
+    out += "[ ] " + m.label + ": " + (v || "(not captured)") + "  → " + m.ruuster + "\n";
+  });
+  out += "[ ] Narrative preferences that may not map to filters: " + [a.featuresOther, a.dislikes, a.benefit].filter(Boolean).join(" | ") + "\n";
+  return out;
+}
+function renderSummary() {
+  state.disposition = deriveDisposition();
+  $("sumDisposition").textContent = state.disposition;
+  $("sumDate").textContent = new Date().toLocaleString();
+  var a = state.answers, fg = featureGroups();
+  function row(label, value) {
+    if (value == null || value === "" || (Array.isArray(value) && value.length === 0)) return "";
+    return "<p><strong>" + esc(label) + ":</strong> " + esc(Array.isArray(value) ? value.join(", ") : value) + "</p>";
+  }
+  $("sumBody").innerHTML =
+    row("Contact (only what was entered)", [state.lead.name, state.lead.phone, a.emailConfirmed || state.lead.email].filter(Boolean)) +
+    row("Search setup", a.searchAgreed === "Yes" ? "Agreed — " + [a.emailOptIn, a.emailFrequency].filter(Boolean).join(" / ") : (a.searchAgreed || "")) +
+    row("Must-have", fg.must) + row("Nice-to-have (never exclude on these)", fg.nice) + row("Exclude (hard exclusions only)", a.dealBreakers) +
+    row("Location", a.location) + row("Property type", [a.propertyType, a.propertyTypeOther].filter(Boolean).join(" ")) +
+    row("Price", [a.priceMin, a.priceMax].filter(function (x) { return x !== "" && x != null; }).join(" – ")) +
+    row("Motivation", [a.oneChange, a.wantDifferent, a.rentLikes].filter(Boolean).join(" | ")) +
+    row("Timeline", a.timeline) + row("Obstacle", a.obstacle) +
+    row("Representation", a.representation) +
+    row("Communication permissions", [a.emailOptIn ? "Email: " + a.emailOptIn + " (" + (a.emailFrequency || "") + ")" : "", a.textConsent ? "Text: " + a.textConsent : "", a.callbackAgreed ? "Callback: " + a.callbackAgreed : "", a.optOut ? "Opt-outs: " + a.optOut.join(", ") : ""].filter(Boolean)) +
+    row("Agreed next action", [a.callbackAgreed === "Yes" ? "Callback " + [a.callbackWindow, a.callbackDay, a.callbackDate, a.callbackTz].filter(Boolean).join(" ") : "", a.searchAgreed === "Yes" ? "Set up property matches" : "", a.textConsent && a.textConsent.indexOf("Yes") === 0 ? "Send one-time contact-info text" : ""].filter(Boolean)) +
+    row("Notes", state.notes);
+  $("fubNote").value = buildFubNote();
+  $("ruusterText").value = buildRuusterText();
+  $("ruusterList").innerHTML = RUUSTER_MAP.map(function (m) { return "<p>☐ " + esc(m.label) + " <span class=\"small\">→ " + esc(m.ruuster) + "</span></p>"; }).join("");
+  showScreen("screen-summary");
+  saveDraft();
+}
+function endCall() {
+  var node = state.current ? NODE_BY_ID[state.current] : null;
+  if (node) readFields(node);
+  state.ended = true;
+  renderSummary();
+}
+function resetCall(keepLead) {
+  var lead = keepLead ? state.lead : {};
+  state = { lead: lead, answers: {}, notes: "", path: [], current: null, ended: false, disposition: "" };
+  navHistory = [];
+  try { localStorage.removeItem(DRAFT_KEY); } catch (e) {}
+  showScreen("screen-setup");
+}
+/* ---------- Wire-up ---------- */
+$("btnStart").addEventListener("click", function () {
+  state.lead = { name: $("leadName").value.trim(), phone: $("leadPhone").value.trim(), email: $("leadEmail").value.trim(), id: $("leadId").value.trim(), sourceVerified: $("leadSourceVerified").checked, source: $("leadSource").value.trim() };
+  state.answers = {}; state.notes = ""; state.path = []; navHistory = []; state.ended = false;
+  if (state.lead.email) state.answers.emailConfirmed = state.lead.email;
+  goTo("A01");
+});
+$("btnResume").addEventListener("click", function () {
+  var d = loadDraft();
+  if (!d || !d.current) { alert("No saved draft found on this device."); return; }
+  state.lead = d.lead || {}; state.answers = d.answers || {}; state.notes = d.notes || ""; state.path = d.path || []; state.current = d.current; state.ended = false;
+  if (d.ended) { renderSummary(); return; }
+  navHistory = [];
+  renderNode();
+});
+$("btnBack").addEventListener("click", function () {
+  if (!$("screen-call").classList.contains("hidden")) goBack();
+  else if (!$("screen-tree").classList.contains("hidden") || !$("screen-review").classList.contains("hidden")) renderNode();
+  else if (!$("screen-summary").classList.contains("hidden")) renderNode();
+});
+$("btnJump").addEventListener("click", function () {
+  var stage = prompt("Jump to stage — type: opening, preferences, motivation, setup, outcome");
+  if (stage && ["opening", "preferences", "motivation", "setup", "outcome"].indexOf(stage.trim().toLowerCase()) !== -1) jumpToStage(stage.trim().toLowerCase());
+});
+$("btnTree").addEventListener("click", renderTree);
+$("btnTreeBack").addEventListener("click", function () { if (state.current) renderNode(); else showScreen("screen-setup"); });
+$("btnReviewBack").addEventListener("click", function () { if (state.current) renderNode(); else showScreen("screen-setup"); });
+$("btnNew").addEventListener("click", function () { if (confirm("Start a new call? The current draft stays saved until you delete it.")) resetCall(false); });
+$("btnNew2").addEventListener("click", function () { if (confirm("Start a new call?")) resetCall(false); });
+$("btnEnd").addEventListener("click", function () { if (state.current) endCall(); });
+$("btnTheme").addEventListener("click", function () {
+  var root = document.documentElement;
+  var cur = root.getAttribute("data-theme");
+  root.setAttribute("data-theme", cur === "dark" ? "light" : "dark");
+});
+$("btnCopyFub").addEventListener("click", function () { copyText($("fubNote").value, "FUB note copied."); });
+$("btnCopyRuuster").addEventListener("click", function () { copyText($("ruusterText").value, "Ruuster checklist copied."); });
+function copyText(text, msg) {
+  function done() { $("copyStatus").textContent = msg; }
+  if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(text).then(done).catch(function () { fallbackCopy(text); done(); }); }
+  else { fallbackCopy(text); done(); }
+}
+function fallbackCopy(text) {
+  var ta = document.createElement("textarea");
+  ta.value = text; document.body.appendChild(ta); ta.select();
+  try { document.execCommand("copy"); } catch (e) {}
+  document.body.removeChild(ta);
+}
+$("btnExport").addEventListener("click", function () {
+  var blob = new Blob([JSON.stringify({ lead: state.lead, answers: state.answers, notes: state.notes, path: state.path, disposition: state.disposition, exportedAt: new Date().toISOString() }, null, 2)], { type: "application/json" });
+  var a = document.createElement("a");
+  a.href = URL.createObjectURL(blob); a.download = "coldcall-draft.json"; a.click();
+  setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
+});
+$("btnReview").addEventListener("click", function () {
+  var rows = [];
+  Object.keys(state.answers).forEach(function (k) {
+    var v = state.answers[k];
+    if (v == null || v === "" || (Array.isArray(v) && v.length === 0)) return;
+    rows.push("<p><strong>" + esc(k) + ":</strong> " + esc(typeof v === "object" ? JSON.stringify(v) : v) + "</p>");
+  });
+  $("reviewList").innerHTML = rows.length ? rows.join("") : "<p>No answers captured yet.</p>";
+  showScreen("screen-review");
+});
+$("btnDeleteAll").addEventListener("click", function () {
+  if (confirm("Delete this draft from this device? This cannot be undone.")) { resetCall(false); }
+});
+// Resume prompt on load if a draft exists.
+(function init() {
+  var d = loadDraft();
+  if (d && d.current && !d.ended) {
+    $("btnResume").textContent = "Resume saved draft (" + d.current + ")";
+  }
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", function () { navigator.serviceWorker.register("sw.js").catch(function () {}); });
+  }
+})();
+</script>
+</body>
+</html>
