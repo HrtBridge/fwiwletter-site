@@ -21,6 +21,22 @@ Eight generated pages, self-contained under `knot4profit/`: home, events, how we
 - Reviewed site-console output; no errors from the Knot-4-Profit application files were observed. Browser-extension messages and the separate responsive-review harness are outside the application.
 - Checked the main text/background color pairs mathematically: contrast ranged from 5.33:1 to 12.65:1. This is a focused check, not an accessibility certification.
 
+## Link audit and contact-flow update
+
+Reviewed November 24, 2026 (America/Chicago), using the exact private-deployment files in the managed local browser preview.
+
+- Clicked all 97 visible internal page links in the original package, including every header/footer placement and event-detail link. Each reached the expected route and page heading. The additional events empty-state link was hidden under the current event data; its target passed the static route check.
+- Clicked all six distinct external destinations. Breakfast tickets, the sponsorship form, the official Voices of Courage event page, RunSignup, and the past Hurts Donuts fundraiser loaded correctly. The fundraiser correctly reported sales closed. Facebook reached the organization’s page and displayed a dismissible login prompt. No forms, registrations, payments, or messages were submitted.
+- Activated all eight skip-to-content links and confirmed focus on each page’s main element.
+- Checked the All / Upcoming / Past event filters: 3 / 1 / 2 visible event cards, respectively, at the review date.
+- Replaced nine topic-specific email CTAs and eight footer email links with native navigation to the visible contact panel. Clicked all 17 revised links and confirmed the correct contact anchor, focus, topic, and encoded email subject.
+- Tested all four mobile-menu destinations at a 390-pixel CSS viewport, along with menu closure after navigation and Escape dismissal.
+- Verified the mobile copy-email success feedback. Verified that the contact section remains reachable and its address readable with JavaScript disabled. The optional copy button correctly stays hidden without JavaScript.
+- The contact panel now labels the actual mail-handler action “Open email app” and keeps a readable address and copy option beside it. The review browser cannot launch mailto URLs; delivery through a visitor’s configured mail application remains device dependent.
+- The private-host browser click-through remains unverified because authentication could not be completed in the review browser. Local click-through and native deployment success do not prove the production host’s folder-routing behavior. No hosting-routing changes were made without evidence of a defect.
+
+[Revised mobile contact panel](contact-mobile.jpg)
+
 ## Screenshots
 
 These are actual Chromium screenshots of the implemented pages. Responsive sizes were rendered in same-origin review frames with the stated CSS viewport widths; these are not physical-device tests. Screenshots omit the private review toolbar.
@@ -32,7 +48,7 @@ These are actual Chromium screenshots of the implemented pages. Responsive sizes
 
 ## Boundaries
 
-- This is a branch/local preview, not a verified production deployment. Merge and publication remain subject to the agreed release approval.
+- The GitHub change remains a draft branch; the FWIW production path has not been published. A separate owner-private Site is deployed for review. GitHub merge and FWIW publication remain subject to the agreed release approval.
 - No automated Lighthouse score or full accessibility conformance claim is made. Field performance and production-host read-back remain future checks.
 - Core content is static, with local fonts and small progressive-enhancement scripts. There is no service worker, runtime framework, analytics, payment processing, or contact-form submission service.
 - The original published organization banner is included on About. The header uses a plain text name treatment; the palette and typesetting are design proposals for review. No documentary photography or unapproved board portraits are used.

@@ -96,6 +96,22 @@
   window.setInterval(refreshEvents, 30000);
   document.addEventListener('visibilitychange', function () { if (!document.hidden) refreshEvents(); });
 
+  var contactTopic = document.querySelector('[data-contact-topic]');
+  var emailLaunch = document.querySelector('[data-email-launch]');
+  if (contactTopic && emailLaunch) {
+    var emailAddress = emailLaunch.getAttribute('href');
+    function updateContactTopic() {
+      var subject = Array.from((new URLSearchParams(window.location.search).get('subject') || '')
+        .replace(/[\u0000-\u001f\u007f]/g, ' ').trim()).slice(0, 160).join('');
+      contactTopic.textContent = subject ? 'Your topic: ' + subject : '';
+      contactTopic.hidden = !subject;
+      emailLaunch.setAttribute('href', emailAddress + (subject ? '?subject=' + encodeURIComponent(subject) : ''));
+    }
+    updateContactTopic();
+    window.addEventListener('pageshow', updateContactTopic);
+    window.addEventListener('popstate', updateContactTopic);
+  }
+
   var copyButton = document.querySelector('[data-copy-email]');
   var copyStatus = document.querySelector('[data-copy-status]');
   if (copyButton && navigator.clipboard && window.isSecureContext) {

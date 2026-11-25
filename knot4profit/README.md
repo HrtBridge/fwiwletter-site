@@ -108,3 +108,7 @@ This preview's `noindex` metadata is a search-engine instruction, not access con
 - Barlow Condensed ExtraBold (800) and DM Sans Regular (400)/Bold (700) are served locally. The original font files came from Google Fonts; their SIL Open Font License files are retained as `assets/fonts/OFL-Barlow-Condensed.txt` and `assets/fonts/OFL-DM-Sans.txt`.
 - Official license sources: [Barlow Condensed](https://github.com/google/fonts/blob/main/ofl/barlowcondensed/OFL.txt) and [DM Sans](https://github.com/google/fonts/blob/main/ofl/dmsans/OFL.txt).
 - Public event-source links are retained with each record in `content/events.json`. Keep the organization's role and the benefiting cause distinct when updating copy.
+
+## Contact navigation
+
+Topic-specific contact links and footer email addresses navigate to the Get involved contact panel. A bounded `subject` query parameter preserves the topic for the explicitly labelled **Open email app** action. The panel also exposes the address as selectable text and a progressive copy button. No form submission or email backend is configured. Native contact navigation and the readable address remain usable without JavaScript.
