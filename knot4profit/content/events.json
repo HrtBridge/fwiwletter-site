@@ -1,0 +1,118 @@
+[
+  {
+    "slug": "breakfast-of-champions-2026",
+    "title": "Voices of Courage Breakfast of Champions",
+    "short_title": "Breakfast of Champions",
+    "category": "Breakfast & community recognition",
+    "date": "2026-12-17",
+    "starts_at": "2026-12-17T07:30:00-06:00",
+    "ends_at": "2026-12-17T09:30:00-06:00",
+    "timezone": "America/Chicago",
+    "date_label": "Thursday, December 17, 2026",
+    "time_label": "7:30–9:30 a.m. Central",
+    "venue": "InspireU",
+    "address": "521 Felix Street, St. Joseph, MO 64501",
+    "location_label": "InspireU · St. Joseph, Missouri",
+    "beneficiary": "Voices of Courage Child Advocacy Center",
+    "role": "Organizer",
+    "featured": true,
+    "archived": false,
+    "theme": "sky",
+    "summary": "A morning to recognize community champions and support children and families through Voices of Courage Child Advocacy Center.",
+    "description": [
+      "Start the morning with people making a difference for children and families. Join us for breakfast, community recognition, and support for Voices of Courage Child Advocacy Center.",
+      "Knot-4-Profit Collaborations is organizing the event. Voices of Courage Child Advocacy Center is the benefiting organization, supporting children and families affected by abuse.",
+      "Find current ticket and table options through Zeffy. Businesses and individuals interested in sponsorship can explore opportunities through the event’s sponsorship form."
+    ],
+    "official_url": "https://voicescac.org/event/voices-of-courage-breakfast-of-champions/",
+    "official_label": "Official event information",
+    "actions": [
+      {
+        "label": "Get tickets",
+        "url": "https://www.zeffy.com/en-US/ticketing/voices-of-courage-breakfast-of-champions",
+        "kind": "tickets",
+        "display_until": "2026-12-17T07:30:00-06:00"
+      },
+      {
+        "label": "Sponsor this event",
+        "url": "https://docs.google.com/forms/d/e/1FAIpQLSeqMlDginGLGbKrZ-3U-UHOiJYX5rePM2pK7DS-ptbYM7vnbQ/viewform?pli=1",
+        "kind": "sponsorship",
+        "display_until": "2026-12-17T07:30:00-06:00"
+      }
+    ],
+    "sources": [
+      "https://voicescac.org/event/voices-of-courage-breakfast-of-champions/",
+      "https://www.zeffy.com/en-US/ticketing/voices-of-courage-breakfast-of-champions"
+    ],
+    "verified_on": "2026-11-24",
+    "story_heading": "A morning with purpose."
+  },
+  {
+    "slug": "pony-express-5k-2026",
+    "title": "Pony Express 5K",
+    "short_title": "Pony Express 5K",
+    "category": "Community run",
+    "date": "2026-06-06",
+    "starts_at": null,
+    "ends_at": null,
+    "timezone": "America/Chicago",
+    "date_label": "June 6, 2026",
+    "time_label": null,
+    "venue": "Pony Express Museum",
+    "address": "St. Joseph, Missouri",
+    "location_label": "Pony Express Museum · St. Joseph",
+    "beneficiary": "St. Jude Children’s Research Hospital, through the Measly Mile Mafia Heroes",
+    "role": "Silver Sponsor",
+    "featured": false,
+    "archived": true,
+    "theme": "deep",
+    "summary": "A community run supporting St. Jude Children’s Research Hospital, with Knot-4-Profit Collaborations participating as a Silver Sponsor.",
+    "description": [
+      "The Pony Express 5K brought runners together in St. Joseph on June 6, 2026, in support of St. Jude Children’s Research Hospital through the Measly Mile Mafia Heroes.",
+      "Knot-4-Profit Collaborations participated as a Silver Sponsor. The race’s official RunSignup page is the source for race information and any future editions."
+    ],
+    "official_url": "https://runsignup.com/PonyExpress5k",
+    "official_label": "Visit the race website",
+    "actions": [],
+    "sources": [
+      "https://runsignup.com/PonyExpress5k",
+      "https://runsignup.com/Race/45985/Sponsor/1065238"
+    ],
+    "verified_on": "2026-11-24"
+  },
+  {
+    "slug": "hurts-donuts-for-st-jude-2026",
+    "title": "Hurts Donuts for St. Jude",
+    "short_title": "Hurts Donuts for St. Jude",
+    "category": "Community fundraiser",
+    "date": "2026-05-08",
+    "starts_at": null,
+    "ends_at": null,
+    "timezone": "America/Chicago",
+    "date_label": "May 8, 2026",
+    "time_label": null,
+    "venue": "River Bluff Brewing",
+    "address": "St. Joseph, Missouri",
+    "location_label": "River Bluff Brewing · St. Joseph",
+    "beneficiary": "St. Jude Children’s Research Hospital, through the Measly Mile Mafia Heroes",
+    "role": "Facilitator",
+    "featured": false,
+    "archived": true,
+    "theme": "mist",
+    "summary": "A sweet way to support St. Jude. Knot-4-Profit helped facilitate a Hurts Donuts fundraiser for the Measly Mile Mafia Heroes’ campaign.",
+    "description": [
+      "A box of donuts became a way to support a shared cause. The May 8, 2026 fundraiser offered Hurts Donuts for pickup at River Bluff Brewing in St. Joseph.",
+      "Knot-4-Profit Collaborations helped facilitate the fundraiser, supporting the Measly Mile Mafia Heroes’ New York Marathon campaign for St. Jude Children’s Research Hospital.",
+      "This fundraiser has ended. Its original event page remains available for background information."
+    ],
+    "official_url": "https://www.zeffy.com/en-US/ticketing/hurts-donuts-for-st-jude-childrens-research-hospital",
+    "official_label": "About the fundraiser",
+    "actions": [],
+    "sources": [
+      "https://www.zeffy.com/en-US/organizations/knot-4-profit-collaborations",
+      "https://www.zeffy.com/en-US/ticketing/hurts-donuts-for-st-jude-childrens-research-hospital",
+      "https://www.kq2.com/news/2026/05/03/hurts-donuts-measly-mile-mafia-teaming-up-to-benefit-st-judes-with-donut-fundraiser/"
+    ],
+    "verified_on": "2026-11-24"
+  }
+]
