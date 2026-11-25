@@ -104,6 +104,8 @@ This preview's `noindex` metadata is a search-engine instruction, not access con
 
 ## Assets and credits
 
+- `assets/brand-logo.png` is the unmodified 300 × 250 PNG identified as Knot-4-Profit Collaborations’ logo in the [Pony Express 5K sponsor listing](https://runsignup.com/Race/Sponsors/MO/SaintJoseph/PonyExpressRun5KandHalfMarathon), corroborated by the organization’s [Facebook profile](https://www.facebook.com/Knot4Profit/). [Original PNG](https://d368g9lw5ileu7.cloudfront.net/races/race45985-racesponsor-0.bPZ9ny.png). Retrieved November 24, 2026. The header background matches the image’s pale blue edges; the original image is not cropped, redrawn, recolored, or upscaled. A larger original can replace this modest-resolution source later.
+
 - `assets/brand-banner.jpg` is an unmodified copy of the organization's published brand artwork, sourced from the [Knot-4-Profit Collaborations Zeffy profile](https://www.zeffy.com/en-US/organizations/knot-4-profit-collaborations).
 - Barlow Condensed ExtraBold (800) and DM Sans Regular (400)/Bold (700) are served locally. The original font files came from Google Fonts; their SIL Open Font License files are retained as `assets/fonts/OFL-Barlow-Condensed.txt` and `assets/fonts/OFL-DM-Sans.txt`.
 - Official license sources: [Barlow Condensed](https://github.com/google/fonts/blob/main/ofl/barlowcondensed/OFL.txt) and [DM Sans](https://github.com/google/fonts/blob/main/ofl/dmsans/OFL.txt).

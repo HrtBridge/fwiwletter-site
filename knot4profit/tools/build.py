@@ -67,7 +67,7 @@ def page_shell(page, title, description, content, active='', body_class=''):
   <meta property="og:image:height" content="348">
   <meta property="og:image:alt" content="Knot-4-Profit Collaborations — nonprofit funding solutions">
   <meta name="twitter:card" content="summary_large_image">
-  <link rel="icon" href="{base}assets/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="{base}assets/brand-logo.png" type="image/png">
   <link rel="preload" href="{base}assets/fonts/barlow-condensed-800.ttf" as="font" type="font/ttf" crossorigin>
   <link rel="stylesheet" href="{base}assets/site.css">
   <script src="{base}assets/event-state.js" defer></script>
@@ -77,7 +77,7 @@ def page_shell(page, title, description, content, active='', body_class=''):
   <a class="skip-link" href="#main">Skip to content</a>
   <header class="site-header">
     <div class="container header-inner">
-      <a class="wordmark" href="{base}" aria-label="Knot-4-Profit Collaborations home"><span>KNOT<span class="brand-four">4</span>PROFIT</span><small>COLLABORATIONS</small></a>
+      <a class="wordmark" href="{base}" aria-label="Knot-4-Profit Collaborations home"><img class="brand-logo" src="{base}assets/brand-logo.png" width="300" height="250" alt="Knot-4-Profit Collaborations"></a>
       <button class="menu-toggle" type="button" aria-controls="primary-nav" aria-expanded="false" hidden><span>Menu</span><span class="menu-icon" aria-hidden="true"></span></button>
       <nav class="primary-nav" id="primary-nav" aria-label="Main navigation">{links}</nav>
     </div>

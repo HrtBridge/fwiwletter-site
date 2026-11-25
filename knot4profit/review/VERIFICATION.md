@@ -37,9 +37,20 @@ Reviewed November 24, 2026 (America/Chicago), using the exact private-deployment
 
 [Revised mobile contact panel](contact-mobile.jpg)
 
+## Original logo update
+
+Reviewed November 24, 2026 (America/Chicago), against the exact private-deployment files in the managed local browser preview.
+
+- Replaced the temporary text header with the original Knot-4-Profit Collaborations PNG recovered from the Pony Express sponsor listing and corroborated against the organization's Facebook profile. The original image is included without cropping, recoloring, redrawing, or enlargement; source details are in the README.
+- Checked the header at desktop and 390-pixel phone frame widths. At a 320-pixel frame width, reduced the logo to 148 pixels and tightened the gap so the Menu button stays beside it. The 320-pixel frame's usable document width and scroll width both measured 305 pixels, with no horizontal overflow.
+- Confirmed the image loads at its original 300-by-250 intrinsic dimensions on the homepage and nested event page. Clicked the nested page's logo to return home, and checked mobile menu opening and Escape dismissal.
+- All eight generated pages resolve both the header logo and PNG favicon. The static link, asset, metadata, mount-path, and generator-consistency checks passed again. The small logo lettering and favicon remain limited by the recovered asset's modest resolution.
+
+[Updated mobile header](logo-home-mobile.jpg)
+
 ## Screenshots
 
-These are actual Chromium screenshots of the implemented pages. Responsive sizes were rendered in same-origin review frames with the stated CSS viewport widths; these are not physical-device tests. Screenshots omit the private review toolbar.
+These are actual Chromium screenshots of the implemented pages. Responsive sizes were rendered in same-origin review frames with the stated CSS viewport widths; these are not physical-device tests. Screenshots omit the private review toolbar. The four initial-build screenshots below predate the original logo update; use the updated mobile-header screenshot above for the current branding.
 
 - [Homepage, 1440 px](home-desktop.jpg)
 - [Homepage, 390 px](home-mobile.jpg)
@@ -51,6 +62,6 @@ These are actual Chromium screenshots of the implemented pages. Responsive sizes
 - The GitHub change remains a draft branch; the FWIW production path has not been published. A separate owner-private Site is deployed for review. GitHub merge and FWIW publication remain subject to the agreed release approval.
 - No automated Lighthouse score or full accessibility conformance claim is made. Field performance and production-host read-back remain future checks.
 - Core content is static, with local fonts and small progressive-enhancement scripts. There is no service worker, runtime framework, analytics, payment processing, or contact-form submission service.
-- The original published organization banner is included on About. The header uses a plain text name treatment; the palette and typesetting are design proposals for review. No documentary photography or unapproved board portraits are used.
+- The original published organization banner is included on About, and the original organization logo is now used in the header and browser icon. The remaining palette and typesetting are design proposals for review. No documentary photography or unapproved board portraits are used.
 - The event editor is not configured. The README explains the source format and the additional requirements for a usable visual-editor handoff.
 - Preview pages retain `noindex, nofollow`. Final origin, social metadata, indexing, and domain migration must be set deliberately at an approved launch.
