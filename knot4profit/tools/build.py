@@ -52,7 +52,7 @@ def page_shell(page, title, description, content, active='', body_class=''):
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#236581">
+  <meta name="theme-color" content="#2C6D91">
   <title>{esc(title)} | Knot-4-Profit Collaborations</title>
   <meta name="description" content="{esc(description)}">
   {robots}

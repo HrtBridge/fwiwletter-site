@@ -48,9 +48,22 @@ Reviewed November 24, 2026 (America/Chicago), against the exact private-deployme
 
 [Updated mobile header](logo-home-mobile.jpg)
 
+## Logo-based palette update
+
+Reviewed November 24, 2026 (America/Chicago), against the exact private-deployment files in the managed local browser preview.
+
+- Applied the agreed seven-color palette across all eight pages: Logo Sky `#B4E3F7`, Knot Blue `#2C6D91`, Ink `#203139`, Cloud `#F5FAFC`, Mist `#E4F3FA`, Slate `#526A76`, and Deep Blue `#204D67`. Replaced the former yellow and peach themes with `sky`, `deep`, and `mist`; regenerated browser theme-color metadata.
+- Original logo and banner bytes, page content, navigation destinations, layout dimensions, and JavaScript behavior are unchanged. CSS now keeps small text on Logo Sky in Ink or Deep Blue, and places Slate copy on lighter surfaces.
+- Reviewed the homepage at 1440- and 390-pixel frame widths, the event listing and selected filter hover state on desktop, and the contact panel with keyboard focus on a phone. Checked the narrow 320-pixel header, menu opening, and Escape dismissal. No horizontal overflow: the narrow document measured 305/305 pixels and the phone contact document 375/375 pixels for client/scroll width.
+- Read back computed browser colors for the header, page, selected filters, event date panels, status badges, contact buttons, supporting copy, footer, and keyboard focus. Confirmed the selected event filter stays white on Knot Blue and changes to Deep Blue while hovered.
+- Focused mathematical contrast checks passed: Ink on Logo Sky 9.79:1; Deep Blue on Logo Sky 6.59:1; Slate on Cloud 5.42:1 and Mist 5.02:1; white on Knot Blue 5.67:1 and Deep Blue 9.06:1; Mist on Knot Blue 5.00:1. The Logo Sky focus ring on Knot Blue is 4.12:1. These checks do not establish full accessibility conformance.
+- The eight-page static link, anchor, asset, metadata, mount-path, and generator-consistency checks passed. A separate read-only code review found no accidental content, link, or layout changes.
+
+Current palette screenshots: [desktop home](palette-home-desktop.jpg), [phone home](palette-home-mobile.jpg), and [phone contact with keyboard focus](palette-contact-mobile.jpg).
+
 ## Screenshots
 
-These are actual Chromium screenshots of the implemented pages. Responsive sizes were rendered in same-origin review frames with the stated CSS viewport widths; these are not physical-device tests. Screenshots omit the private review toolbar. The four initial-build screenshots below predate the original logo update; use the updated mobile-header screenshot above for the current branding.
+These are actual Chromium screenshots of the implemented pages. Responsive sizes were rendered in same-origin review frames with the stated CSS viewport widths; these are not physical-device tests. Screenshots omit the private review toolbar. The initial-build and original-logo screenshots predate the palette update; use the palette screenshots above for current colors and branding.
 
 - [Homepage, 1440 px](home-desktop.jpg)
 - [Homepage, 390 px](home-mobile.jpg)

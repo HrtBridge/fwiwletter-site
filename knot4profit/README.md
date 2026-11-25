@@ -50,7 +50,7 @@ Only public-safe information belongs in this repository, including JSON and sour
 3. Set the title, summary, description paragraphs, venue, address, beneficiary, and **Knot-4-Profit's exact role**. Organizer, facilitator, and sponsor are different roles; an individual's involvement does not establish an organizational role.
 4. Set the calendar `date` as `YYYY-MM-DD`. For a scheduled event with known times, set `starts_at` and `ends_at` to complete ISO timestamps with explicit offsets, such as `2026-12-17T07:30:00-06:00`. Keep the human-readable `date_label` and `time_label` consistent. The `timezone` field records the event's named zone, normally `America/Chicago`; the explicit timestamp offsets must reflect daylight-saving time on the actual event date.
 5. Link `official_url` and any action to the correct organization- or event-controlled destination. Preserve existing registration providers. Keep public `sources` and `verified_on` current. Do not invent prices, proceeds claims, or deadlines.
-6. Use `featured: true` for exactly one event to populate the homepage feature. Update that selection when the highlighted event changes. The available visual themes are `blue`, `yellow`, and `peach`.
+6. Use `featured: true` for exactly one event to populate the homepage feature. Update that selection when the highlighted event changes. The available visual themes are `sky`, `deep`, and `mist`.
 7. Regenerate and run the checks. Open the event directly, refresh it, and check the homepage and event listing.
 
 ### Archive, cancel, or remove an event
@@ -101,6 +101,22 @@ Before an approved final launch:
 - Publish through the agreed branch/review process, verify the successful deployment, and read back the actual public pages.
 
 This preview's `noindex` metadata is a search-engine instruction, not access control. Everything committed or published must remain appropriate for public access.
+
+## Brand colors
+
+The agreed logo-based palette is defined once in `assets/site.css`:
+
+| Color | Hex | Use |
+| --- | --- | --- |
+| Logo Sky | `#B4E3F7` | Header, featured event, light buttons, dark-section accents |
+| Knot Blue | `#2C6D91` | Primary actions, links, selected filters |
+| Ink | `#203139` | Headlines and body text |
+| Cloud | `#F5FAFC` | Page background and status badges |
+| Mist | `#E4F3FA` | Information panels, alternating sections, supporting copy on blue |
+| Slate | `#526A76` | Supporting text on Cloud, Mist, and white |
+| Deep Blue | `#204D67` | Hover states, footer, dark date panels, small blue text on Logo Sky |
+
+White is used for text on Knot Blue and Deep Blue. Decorative borders and shadows use translucent palette colors. Keep ordinary small text on Logo Sky in Ink or Deep Blue: Slate and Knot Blue do not reach 4.5:1 on that background. Use Logo Sky focus indicators on dark sections. Original logo and banner artwork are unchanged.
 
 ## Assets and credits
 
